@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Entities.Store" Alias="Self" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.1" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="EntitiesStoreContainer">
+    <EntitySet Name="Users" EntityType="Entities.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Devices" EntityType="Entities.Store.Devices" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Components" EntityType="Entities.Store.Components" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ComponentHistoricalData" EntityType="Entities.Store.ComponentHistoricalData" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="ComponentComponentHistoricalData" Association="Entities.Store.ComponentComponentHistoricalData">
+      <End Role="Component" EntitySet="Components" />
+      <End Role="ComponentHistoricalData" EntitySet="ComponentHistoricalData" />
+    </AssociationSet>
+    <AssociationSet Name="DeviceComponent" Association="Entities.Store.DeviceComponent">
+      <End Role="Device" EntitySet="Devices" />
+      <End Role="Component" EntitySet="Components" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Devices">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="longtext" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Components">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DeviceId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ComponentHistoricalData">
+    <Key>
+      <PropertyRef Name="TimeStamp" />
+      <PropertyRef Name="ComponentId" />
+    </Key>
+    <Property Name="TimeStamp" Type="datetime" Nullable="false" />
+    <Property Name="ComponentId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="ComponentComponentHistoricalData">
+    <End Role="Component" Type="Entities.Store.Components" Multiplicity="1" />
+    <End Role="ComponentHistoricalData" Type="Entities.Store.ComponentHistoricalData" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Component">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ComponentHistoricalData">
+        <PropertyRef Name="ComponentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="DeviceComponent">
+    <End Role="Device" Type="Entities.Store.Devices" Multiplicity="1" />
+    <End Role="Component" Type="Entities.Store.Components" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Device">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Component">
+        <PropertyRef Name="DeviceId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Entities" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="EntitiesContainer" annotation:LazyLoadingEnabled="false">
+          <EntitySet Name="Users" EntityType="Entities.User" />
+          <EntitySet Name="Devices" EntityType="Entities.Device" />
+          <EntitySet Name="Components" EntityType="Entities.Component" />
+          <EntitySet Name="ComponentHistoricalData" EntityType="Entities.ComponentHistoricalData" />
+          <AssociationSet Name="ComponentComponentHistoricalData" Association="Entities.ComponentComponentHistoricalData">
+            <End Role="Component" EntitySet="Components" />
+            <End Role="ComponentHistoricalData" EntitySet="ComponentHistoricalData" />
+          </AssociationSet>
+          <AssociationSet Name="DeviceComponent" Association="Entities.DeviceComponent">
+            <End Role="Device" EntitySet="Devices" />
+            <End Role="Component" EntitySet="Components" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Device">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Component" Relationship="Entities.DeviceComponent" FromRole="Device" ToRole="Component" />
+          <Property Type="String" Name="Name" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Component">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="ComponentHistoricalData" Relationship="Entities.ComponentComponentHistoricalData" FromRole="Component" ToRole="ComponentHistoricalData" />
+          <NavigationProperty Name="Device" Relationship="Entities.DeviceComponent" FromRole="Component" ToRole="Device" />
+          <Property Name="DeviceId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ComponentHistoricalData">
+          <Key>
+            <PropertyRef Name="TimeStamp" />
+            <PropertyRef Name="ComponentId" />
+          </Key>
+          <Property Name="TimeStamp" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Component" Relationship="Entities.ComponentComponentHistoricalData" FromRole="ComponentHistoricalData" ToRole="Component" />
+          <Property Name="ComponentId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="ComponentComponentHistoricalData">
+          <End Type="Entities.Component" Role="Component" Multiplicity="1" />
+          <End Type="Entities.ComponentHistoricalData" Role="ComponentHistoricalData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Component">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ComponentHistoricalData">
+              <PropertyRef Name="ComponentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="DeviceComponent">
+          <End Type="Entities.Device" Role="Device" Multiplicity="1" />
+          <End Type="Entities.Component" Role="Component" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Device">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Component">
+              <PropertyRef Name="DeviceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EntitiesStoreContainer" CdmEntityContainer="EntitiesContainer">
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="IsTypeOf(Entities.User)">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Devices">
+      <EntityTypeMapping TypeName="IsTypeOf(Entities.Device)">
+        <MappingFragment StoreEntitySet="Devices">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Components">
+      <EntityTypeMapping TypeName="IsTypeOf(Entities.Component)">
+        <MappingFragment StoreEntitySet="Components">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ComponentHistoricalData">
+      <EntityTypeMapping TypeName="IsTypeOf(Entities.ComponentHistoricalData)">
+        <MappingFragment StoreEntitySet="ComponentHistoricalData">
+          <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+          <ScalarProperty Name="ComponentId" ColumnName="ComponentId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="DDLGenerationTemplate" Value="$(VSEFTools)\DBGen\SSDLToMySQL.tt" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
