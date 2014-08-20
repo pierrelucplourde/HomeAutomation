@@ -10,6 +10,7 @@
     <EntitySet Name="Devices" EntityType="Entities.Store.Devices" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="Components" EntityType="Entities.Store.Components" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="ComponentHistoricalData" EntityType="Entities.Store.ComponentHistoricalData" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="ComponentType" EntityType="Entities.Store.ComponentType" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="ComponentComponentHistoricalData" Association="Entities.Store.ComponentComponentHistoricalData">
       <End Role="Component" EntitySet="Components" />
       <End Role="ComponentHistoricalData" EntitySet="ComponentHistoricalData" />
@@ -18,12 +19,20 @@
       <End Role="Device" EntitySet="Devices" />
       <End Role="Component" EntitySet="Components" />
     </AssociationSet>
+    <AssociationSet Name="ComponentComponentType" Association="Entities.Store.ComponentComponentType">
+      <End Role="Component" EntitySet="Components" />
+      <End Role="ComponentType" EntitySet="ComponentType" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="Users">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Username" Type="longtext" Nullable="false" />
+    <Property Name="Name" Type="longtext" Nullable="false" />
+    <Property Name="Password" Type="longtext" Nullable="false" />
+    <Property Name="IsAdmin" Type="bool" Nullable="false" />
   </EntityType>
   <EntityType Name="Devices">
     <Key>
@@ -31,6 +40,9 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="longtext" Nullable="false" />
+    <Property Name="Description" Type="longtext" Nullable="false" />
+    <Property Name="Location" Type="longtext" Nullable="false" />
+    <Property Name="LastModified" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="Components">
     <Key>
@@ -38,6 +50,9 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="DeviceId" Type="int" Nullable="false" />
+    <Property Name="ComponentOptions" Type="longtext" Nullable="false" />
+    <Property Name="Compression" Type="decimal" Nullable="false" />
+    <Property Name="ComponentType_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="ComponentHistoricalData">
     <Key>
@@ -46,6 +61,16 @@
     </Key>
     <Property Name="TimeStamp" Type="datetime" Nullable="false" />
     <Property Name="ComponentId" Type="int" Nullable="false" />
+    <Property Name="Value" Type="longtext" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ComponentType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="longtext" Nullable="false" />
+    <Property Name="OptionsTemplate" Type="longtext" Nullable="false" />
+    <Property Name="Description" Type="longtext" Nullable="false" />
   </EntityType>
   <Association Name="ComponentComponentHistoricalData">
     <End Role="Component" Type="Entities.Store.Components" Multiplicity="1" />
@@ -71,6 +96,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="ComponentComponentType">
+    <End Role="Component" Type="Entities.Store.Components" Multiplicity="*" />
+    <End Role="ComponentType" Type="Entities.Store.ComponentType" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="ComponentType">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Component">
+        <PropertyRef Name="ComponentType_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -88,12 +125,21 @@
             <End Role="Device" EntitySet="Devices" />
             <End Role="Component" EntitySet="Components" />
           </AssociationSet>
+          <EntitySet Name="ComponentType" EntityType="Entities.ComponentType" />
+          <AssociationSet Name="ComponentComponentType" Association="Entities.ComponentComponentType">
+            <End Role="Component" EntitySet="Components" />
+            <End Role="ComponentType" EntitySet="ComponentType" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Username" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" />
+          <Property Type="String" Name="Password" Nullable="false" />
+          <Property Type="Boolean" Name="IsAdmin" Nullable="false" />
         </EntityType>
         <EntityType Name="Device">
           <Key>
@@ -102,6 +148,9 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <NavigationProperty Name="Component" Relationship="Entities.DeviceComponent" FromRole="Device" ToRole="Component" />
           <Property Type="String" Name="Name" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+          <Property Type="String" Name="Location" Nullable="false" />
+          <Property Type="DateTime" Name="LastModified" Nullable="false" />
         </EntityType>
         <EntityType Name="Component">
           <Key>
@@ -111,6 +160,9 @@
           <NavigationProperty Name="ComponentHistoricalData" Relationship="Entities.ComponentComponentHistoricalData" FromRole="Component" ToRole="ComponentHistoricalData" />
           <NavigationProperty Name="Device" Relationship="Entities.DeviceComponent" FromRole="Component" ToRole="Device" />
           <Property Name="DeviceId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ComponentType" Relationship="Entities.ComponentComponentType" FromRole="Component" ToRole="ComponentType" />
+          <Property Type="String" Name="ComponentOptions" Nullable="false" />
+          <Property Type="Decimal" Name="Compression" Nullable="false" />
         </EntityType>
         <EntityType Name="ComponentHistoricalData">
           <Key>
@@ -120,6 +172,7 @@
           <Property Name="TimeStamp" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="Component" Relationship="Entities.ComponentComponentHistoricalData" FromRole="ComponentHistoricalData" ToRole="Component" />
           <Property Name="ComponentId" Type="Int32" Nullable="false" />
+          <Property Type="String" Name="Value" Nullable="false" />
         </EntityType>
         <Association Name="ComponentComponentHistoricalData">
           <End Type="Entities.Component" Role="Component" Multiplicity="1" />
@@ -145,6 +198,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ComponentType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Name" Nullable="false" />
+          <NavigationProperty Name="Component" Relationship="Entities.ComponentComponentType" FromRole="ComponentType" ToRole="Component" />
+          <Property Type="String" Name="OptionsTemplate" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+        </EntityType>
+        <Association Name="ComponentComponentType">
+          <End Type="Entities.Component" Role="Component" Multiplicity="*" />
+          <End Type="Entities.ComponentType" Role="ComponentType" Multiplicity="1" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -155,6 +222,10 @@
       <EntityTypeMapping TypeName="IsTypeOf(Entities.User)">
         <MappingFragment StoreEntitySet="Users">
           <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Username" ColumnName="Username" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -163,6 +234,9 @@
         <MappingFragment StoreEntitySet="Devices">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="LastModified" ColumnName="LastModified" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -171,6 +245,8 @@
         <MappingFragment StoreEntitySet="Components">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="DeviceId" ColumnName="DeviceId" />
+          <ScalarProperty Name="ComponentOptions" ColumnName="ComponentOptions" />
+          <ScalarProperty Name="Compression" ColumnName="Compression" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -179,9 +255,28 @@
         <MappingFragment StoreEntitySet="ComponentHistoricalData">
           <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
           <ScalarProperty Name="ComponentId" ColumnName="ComponentId" />
+          <ScalarProperty Name="Value" ColumnName="Value" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="ComponentType">
+      <EntityTypeMapping TypeName="IsTypeOf(Entities.ComponentType)">
+        <MappingFragment StoreEntitySet="ComponentType">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="OptionsTemplate" ColumnName="OptionsTemplate" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="ComponentComponentType" TypeName="Entities.ComponentComponentType" StoreEntitySet="Components">
+      <EndProperty Name="ComponentType">
+        <ScalarProperty Name="Id" ColumnName="ComponentType_Id" />
+      </EndProperty>
+      <EndProperty Name="Component">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>

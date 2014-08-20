@@ -21,6 +21,7 @@ using System.Xml.Serialization;
 
 [assembly: EdmRelationshipAttribute("Entities", "ComponentComponentHistoricalData", "Component", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(HomeAutomation.WebPortal.Models.Component), "ComponentHistoricalData", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(HomeAutomation.WebPortal.Models.ComponentHistoricalData), true)]
 [assembly: EdmRelationshipAttribute("Entities", "DeviceComponent", "Device", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(HomeAutomation.WebPortal.Models.Device), "Component", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(HomeAutomation.WebPortal.Models.Component), true)]
+[assembly: EdmRelationshipAttribute("Entities", "ComponentComponentType", "Component", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.Many, typeof(HomeAutomation.WebPortal.Models.Component), "ComponentType", System.Data.Entity.Core.Metadata.Edm.RelationshipMultiplicity.One, typeof(HomeAutomation.WebPortal.Models.ComponentType))]
 
 #endregion
 
@@ -135,6 +136,22 @@ namespace HomeAutomation.WebPortal.Models
             }
         }
         private ObjectSet<ComponentHistoricalData> _ComponentHistoricalData;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<ComponentType> ComponentType
+        {
+            get
+            {
+                if ((_ComponentType == null))
+                {
+                    _ComponentType = base.CreateObjectSet<ComponentType>("ComponentType");
+                }
+                return _ComponentType;
+            }
+        }
+        private ObjectSet<ComponentType> _ComponentType;
 
         #endregion
 
@@ -171,6 +188,14 @@ namespace HomeAutomation.WebPortal.Models
         {
             base.AddObject("ComponentHistoricalData", componentHistoricalData);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the ComponentType EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToComponentType(ComponentType componentType)
+        {
+            base.AddObject("ComponentType", componentType);
+        }
 
         #endregion
 
@@ -195,11 +220,15 @@ namespace HomeAutomation.WebPortal.Models
         /// </summary>
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="deviceId">Initial value of the DeviceId property.</param>
-        public static Component CreateComponent(global::System.Int32 id, global::System.Int32 deviceId)
+        /// <param name="componentOptions">Initial value of the ComponentOptions property.</param>
+        /// <param name="compression">Initial value of the Compression property.</param>
+        public static Component CreateComponent(global::System.Int32 id, global::System.Int32 deviceId, global::System.String componentOptions, global::System.Decimal compression)
         {
             Component component = new Component();
             component.Id = id;
             component.DeviceId = deviceId;
+            component.ComponentOptions = componentOptions;
+            component.Compression = compression;
             return component;
         }
 
@@ -257,6 +286,54 @@ namespace HomeAutomation.WebPortal.Models
         private global::System.Int32 _DeviceId;
         partial void OnDeviceIdChanging(global::System.Int32 value);
         partial void OnDeviceIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ComponentOptions
+        {
+            get
+            {
+                return _ComponentOptions;
+            }
+            set
+            {
+                OnComponentOptionsChanging(value);
+                ReportPropertyChanging("ComponentOptions");
+                _ComponentOptions = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ComponentOptions");
+                OnComponentOptionsChanged();
+            }
+        }
+        private global::System.String _ComponentOptions;
+        partial void OnComponentOptionsChanging(global::System.String value);
+        partial void OnComponentOptionsChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal Compression
+        {
+            get
+            {
+                return _Compression;
+            }
+            set
+            {
+                OnCompressionChanging(value);
+                ReportPropertyChanging("Compression");
+                _Compression = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Compression");
+                OnCompressionChanged();
+            }
+        }
+        private global::System.Decimal _Compression;
+        partial void OnCompressionChanging(global::System.Decimal value);
+        partial void OnCompressionChanged();
 
         #endregion
 
@@ -321,6 +398,44 @@ namespace HomeAutomation.WebPortal.Models
                 }
             }
         }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Entities", "ComponentComponentType", "ComponentType")]
+        public ComponentType ComponentType
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<ComponentType>("Entities.ComponentComponentType", "ComponentType").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<ComponentType>("Entities.ComponentComponentType", "ComponentType").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<ComponentType> ComponentTypeReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<ComponentType>("Entities.ComponentComponentType", "ComponentType");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<ComponentType>("Entities.ComponentComponentType", "ComponentType", value);
+                }
+            }
+        }
 
         #endregion
 
@@ -341,11 +456,13 @@ namespace HomeAutomation.WebPortal.Models
         /// </summary>
         /// <param name="timeStamp">Initial value of the TimeStamp property.</param>
         /// <param name="componentId">Initial value of the ComponentId property.</param>
-        public static ComponentHistoricalData CreateComponentHistoricalData(global::System.DateTime timeStamp, global::System.Int32 componentId)
+        /// <param name="value">Initial value of the Value property.</param>
+        public static ComponentHistoricalData CreateComponentHistoricalData(global::System.DateTime timeStamp, global::System.Int32 componentId, global::System.String value)
         {
             ComponentHistoricalData componentHistoricalData = new ComponentHistoricalData();
             componentHistoricalData.TimeStamp = timeStamp;
             componentHistoricalData.ComponentId = componentId;
+            componentHistoricalData.Value = value;
             return componentHistoricalData;
         }
 
@@ -406,6 +523,30 @@ namespace HomeAutomation.WebPortal.Models
         private global::System.Int32 _ComponentId;
         partial void OnComponentIdChanging(global::System.Int32 value);
         partial void OnComponentIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Value
+        {
+            get
+            {
+                return _Value;
+            }
+            set
+            {
+                OnValueChanging(value);
+                ReportPropertyChanging("Value");
+                _Value = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Value");
+                OnValueChanged();
+            }
+        }
+        private global::System.String _Value;
+        partial void OnValueChanging(global::System.String value);
+        partial void OnValueChanged();
 
         #endregion
 
@@ -456,6 +597,166 @@ namespace HomeAutomation.WebPortal.Models
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="Entities", Name="ComponentType")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class ComponentType : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new ComponentType object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="name">Initial value of the Name property.</param>
+        /// <param name="optionsTemplate">Initial value of the OptionsTemplate property.</param>
+        /// <param name="description">Initial value of the Description property.</param>
+        public static ComponentType CreateComponentType(global::System.Int32 id, global::System.String name, global::System.String optionsTemplate, global::System.String description)
+        {
+            ComponentType componentType = new ComponentType();
+            componentType.Id = id;
+            componentType.Name = name;
+            componentType.OptionsTemplate = optionsTemplate;
+            componentType.Description = description;
+            return componentType;
+        }
+
+        #endregion
+
+        #region Simple Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _Id;
+        partial void OnIdChanging(global::System.Int32 value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                OnNameChanging(value);
+                ReportPropertyChanging("Name");
+                _Name = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Name");
+                OnNameChanged();
+            }
+        }
+        private global::System.String _Name;
+        partial void OnNameChanging(global::System.String value);
+        partial void OnNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String OptionsTemplate
+        {
+            get
+            {
+                return _OptionsTemplate;
+            }
+            set
+            {
+                OnOptionsTemplateChanging(value);
+                ReportPropertyChanging("OptionsTemplate");
+                _OptionsTemplate = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("OptionsTemplate");
+                OnOptionsTemplateChanged();
+            }
+        }
+        private global::System.String _OptionsTemplate;
+        partial void OnOptionsTemplateChanging(global::System.String value);
+        partial void OnOptionsTemplateChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Description
+        {
+            get
+            {
+                return _Description;
+            }
+            set
+            {
+                OnDescriptionChanging(value);
+                ReportPropertyChanging("Description");
+                _Description = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Description");
+                OnDescriptionChanged();
+            }
+        }
+        private global::System.String _Description;
+        partial void OnDescriptionChanging(global::System.String value);
+        partial void OnDescriptionChanged();
+
+        #endregion
+
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("Entities", "ComponentComponentType", "Component")]
+        public EntityCollection<Component> Component
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Component>("Entities.ComponentComponentType", "Component");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Component>("Entities.ComponentComponentType", "Component", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
     [EdmEntityTypeAttribute(NamespaceName="Entities", Name="Device")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
@@ -468,11 +769,17 @@ namespace HomeAutomation.WebPortal.Models
         /// </summary>
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="name">Initial value of the Name property.</param>
-        public static Device CreateDevice(global::System.Int32 id, global::System.String name)
+        /// <param name="description">Initial value of the Description property.</param>
+        /// <param name="location">Initial value of the Location property.</param>
+        /// <param name="lastModified">Initial value of the LastModified property.</param>
+        public static Device CreateDevice(global::System.Int32 id, global::System.String name, global::System.String description, global::System.String location, global::System.DateTime lastModified)
         {
             Device device = new Device();
             device.Id = id;
             device.Name = name;
+            device.Description = description;
+            device.Location = location;
+            device.LastModified = lastModified;
             return device;
         }
 
@@ -530,6 +837,78 @@ namespace HomeAutomation.WebPortal.Models
         private global::System.String _Name;
         partial void OnNameChanging(global::System.String value);
         partial void OnNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Description
+        {
+            get
+            {
+                return _Description;
+            }
+            set
+            {
+                OnDescriptionChanging(value);
+                ReportPropertyChanging("Description");
+                _Description = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Description");
+                OnDescriptionChanged();
+            }
+        }
+        private global::System.String _Description;
+        partial void OnDescriptionChanging(global::System.String value);
+        partial void OnDescriptionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Location
+        {
+            get
+            {
+                return _Location;
+            }
+            set
+            {
+                OnLocationChanging(value);
+                ReportPropertyChanging("Location");
+                _Location = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Location");
+                OnLocationChanged();
+            }
+        }
+        private global::System.String _Location;
+        partial void OnLocationChanging(global::System.String value);
+        partial void OnLocationChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime LastModified
+        {
+            get
+            {
+                return _LastModified;
+            }
+            set
+            {
+                OnLastModifiedChanging(value);
+                ReportPropertyChanging("LastModified");
+                _LastModified = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("LastModified");
+                OnLastModifiedChanged();
+            }
+        }
+        private global::System.DateTime _LastModified;
+        partial void OnLastModifiedChanging(global::System.DateTime value);
+        partial void OnLastModifiedChanged();
 
         #endregion
 
@@ -575,10 +954,18 @@ namespace HomeAutomation.WebPortal.Models
         /// Create a new User object.
         /// </summary>
         /// <param name="id">Initial value of the Id property.</param>
-        public static User CreateUser(global::System.Int32 id)
+        /// <param name="username">Initial value of the Username property.</param>
+        /// <param name="name">Initial value of the Name property.</param>
+        /// <param name="password">Initial value of the Password property.</param>
+        /// <param name="isAdmin">Initial value of the IsAdmin property.</param>
+        public static User CreateUser(global::System.Int32 id, global::System.String username, global::System.String name, global::System.String password, global::System.Boolean isAdmin)
         {
             User user = new User();
             user.Id = id;
+            user.Username = username;
+            user.Name = name;
+            user.Password = password;
+            user.IsAdmin = isAdmin;
             return user;
         }
 
@@ -612,6 +999,102 @@ namespace HomeAutomation.WebPortal.Models
         private global::System.Int32 _Id;
         partial void OnIdChanging(global::System.Int32 value);
         partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Username
+        {
+            get
+            {
+                return _Username;
+            }
+            set
+            {
+                OnUsernameChanging(value);
+                ReportPropertyChanging("Username");
+                _Username = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Username");
+                OnUsernameChanged();
+            }
+        }
+        private global::System.String _Username;
+        partial void OnUsernameChanging(global::System.String value);
+        partial void OnUsernameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                OnNameChanging(value);
+                ReportPropertyChanging("Name");
+                _Name = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Name");
+                OnNameChanged();
+            }
+        }
+        private global::System.String _Name;
+        partial void OnNameChanging(global::System.String value);
+        partial void OnNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Password
+        {
+            get
+            {
+                return _Password;
+            }
+            set
+            {
+                OnPasswordChanging(value);
+                ReportPropertyChanging("Password");
+                _Password = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Password");
+                OnPasswordChanged();
+            }
+        }
+        private global::System.String _Password;
+        partial void OnPasswordChanging(global::System.String value);
+        partial void OnPasswordChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IsAdmin
+        {
+            get
+            {
+                return _IsAdmin;
+            }
+            set
+            {
+                OnIsAdminChanging(value);
+                ReportPropertyChanging("IsAdmin");
+                _IsAdmin = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IsAdmin");
+                OnIsAdminChanged();
+            }
+        }
+        private global::System.Boolean _IsAdmin;
+        partial void OnIsAdminChanging(global::System.Boolean value);
+        partial void OnIsAdminChanged();
 
         #endregion
 

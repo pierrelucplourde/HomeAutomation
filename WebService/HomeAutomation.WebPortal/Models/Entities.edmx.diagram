@@ -6,11 +6,13 @@
     <edmx:Diagrams>
       <Diagram DiagramId="5f5d570ee8754844b45358ae4d208cf0" Name="Diagram1" >
         <EntityTypeShape EntityType="Entities.User" Width="1.5" PointX="6.25" PointY="1.75" />
-        <EntityTypeShape EntityType="Entities.Device" Width="1.5" PointX="10" PointY="1.625" />
-        <EntityTypeShape EntityType="Entities.Component" Width="1.5" PointX="10.625" PointY="3.875" />
+        <EntityTypeShape EntityType="Entities.Device" Width="1.5" PointX="10" PointY="1.125" />
+        <EntityTypeShape EntityType="Entities.Component" Width="1.5" PointX="10" PointY="4.25" />
         <EntityTypeShape EntityType="Entities.ComponentHistoricalData" Width="1.5" PointX="6.25" PointY="4.5" />
         <AssociationConnector Association="Entities.ComponentComponentHistoricalData" />
         <AssociationConnector Association="Entities.DeviceComponent" />
+        <EntityTypeShape EntityType="Entities.ComponentType" Width="1.5" PointX="13.25" PointY="4.25" />
+        <AssociationConnector Association="Entities.ComponentComponentType" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
