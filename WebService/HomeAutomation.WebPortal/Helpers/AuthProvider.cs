@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using WebMatrix.WebData;
+using MongoDB.Driver.Linq;
 
 namespace HomeAutomation.WebPortal.Helpers {
     public class AuthProvider : SimpleMembershipProvider {
@@ -12,9 +13,10 @@ namespace HomeAutomation.WebPortal.Helpers {
         }
 
         public override bool ValidateUser(string username, string password) {
-            using(var db = new Models.EntitiesContainer()){
-                return db.Users.SingleOrDefault(u=> u.Username == username && u.Password == password)!= null; // base.ValidateUser(username, password);
-            }
+            //using(var db = new Models.EntitiesContainer()){
+            //    return db.Users.SingleOrDefault(u=> u.Username == username && u.Password == password)!= null; // base.ValidateUser(username, password);
+            //}
+            return DataAccess.DatabaseFacade.DatabaseManager.Users.AsQueryable().SingleOrDefault(u=> u.UserName == username && u.Password == password)!= null;
         }
     }
 }
