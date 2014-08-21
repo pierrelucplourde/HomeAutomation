@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeAutomation.DataCollector", "HomeAutomation.DataCollector.csproj", "{F3D45174-1604-48E9-B4BF-9F7CE83421B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeAutomation.DataCollector.UnitTest", "..\HomeAutomation.DataCollector.UnitTest\HomeAutomation.DataCollector.UnitTest.csproj", "{BB36C473-2D9A-443A-8435-26D6680B6103}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{F3D45174-1604-48E9-B4BF-9F7CE83421B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D45174-1604-48E9-B4BF-9F7CE83421B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D45174-1604-48E9-B4BF-9F7CE83421B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB36C473-2D9A-443A-8435-26D6680B6103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB36C473-2D9A-443A-8435-26D6680B6103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB36C473-2D9A-443A-8435-26D6680B6103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB36C473-2D9A-443A-8435-26D6680B6103}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

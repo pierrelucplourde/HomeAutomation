@@ -24,6 +24,8 @@ namespace HomeAutomation.DataAccess.Entity {
 
         public Object CurrentValue { get; set; }
 
+        public bool IsActive { get; set; }
+
         public Dictionary<String,String> Options { get; set; }
 
         public ComponentType Type { get; set; }

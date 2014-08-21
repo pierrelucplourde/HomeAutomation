@@ -12,6 +12,8 @@ namespace HomeAutomation.DataAccess.Entity {
 
         public String Name { get; set; }
 
+        public String Category { get; set; }
+
         public Dictionary<String, String> TemplateOptions { get; set; }
     }
 }
