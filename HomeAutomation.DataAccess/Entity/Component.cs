@@ -20,15 +20,49 @@ namespace HomeAutomation.DataAccess.Entity {
 
         public DateTime LastContact { get; set; }
 
-        public Type ValueType { get; set; }
+        [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+        public DateTime NextContact { get; set; }
+
+        public String ValueType { get; set; }
 
         public Object CurrentValue { get; set; }
 
         public bool IsActive { get; set; }
 
+
         public Dictionary<String,String> Options { get; set; }
 
-        public ComponentType Type { get; set; }
+        public MongoDB.Driver.MongoDBRef TypeId { get; set; }
+
+        [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+        public ComponentType Type {
+            get {
+                return DatabaseFacade.DatabaseManager.Database.FetchDBRefAs<ComponentType>(TypeId);
+            }
+            set {
+                if (value.Id.Pid == 0) {
+                    DatabaseFacade.DatabaseManager.ComponentTypes.Insert(value);
+                }
+                
+                TypeId = new MongoDB.Driver.MongoDBRef("ComponentType", value.Id);
+            }
+        }
+
+        public MongoDB.Driver.MongoDBRef DeviceId { get; set; }
+
+        [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+        public Device Device {
+            get {
+                return DatabaseFacade.DatabaseManager.Database.FetchDBRefAs<Device>(DeviceId);
+            }
+            set {
+                if (value.Id.Pid == 0) {
+                    DatabaseFacade.DatabaseManager.Devices.Insert(value);
+                }
+
+                DeviceId = new MongoDB.Driver.MongoDBRef("Device", value.Id);
+            }
+        }
 
     }
 }

@@ -16,8 +16,25 @@ namespace HomeAutomation.DataAccess.Entity {
 
         public String Location { get; set; }
 
+        public String IPAddress { get; set; }
+
         public DateTime LastModified { get; set; }
 
-        public List<Component> Components { get; set; }
+        public List<MongoDB.Driver.MongoDBRef> ComponentIds { get; set; }
+
+        [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+        public List<Component> Components {
+            get {
+                return ComponentIds.Select(u => DatabaseFacade.DatabaseManager.Database.FetchDBRefAs<Component>(u)).ToList();
+            }
+            set {
+                foreach (var component in value) {
+                    if (component.Id.Pid == 0) {
+                        DatabaseFacade.DatabaseManager.Components.Insert(component);
+                    }
+                }
+                ComponentIds = value.Select(u => new MongoDB.Driver.MongoDBRef("Component", u.Id)).ToList();
+            }
+        }
     }
 }

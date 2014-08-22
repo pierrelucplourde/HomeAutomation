@@ -33,14 +33,14 @@ namespace HomeAutomation.DataAccess {
             }
         }
 
-        
+
 
         public MongoDB.Driver.MongoCollection<Entity.User> Users {
             get {
                 if (Database != null) {
                     return Database.GetCollection<Entity.User>("User");
                 }
-                return null; 
+                return null;
             }
         }
 
@@ -89,6 +89,15 @@ namespace HomeAutomation.DataAccess {
             }
         }
 
+        public bool IsDeviceCollectionExist {
+            get {
+                if (Database != null) {
+                    return Database.CollectionExists("Device");
+                }
+                return false;
+            }
+        }
+
         public DatabaseFacade() {
             //InitializeDatabaseConnection("mongodb://localhost", "HomeAutomation");
         }
@@ -103,7 +112,30 @@ namespace HomeAutomation.DataAccess {
             Database = server.GetDatabase(dbname);
         }
 
+        public void InitializeDatabaseStructure() {
+            var nDevice = new Entity.Device() {
+                Name = "Localhost",
+                Description = "LocalComputer",
+                LastModified = DateTime.Now,
+                IPAddress = "127.0.0.1",
+                Components = new List<Entity.Component>() { new Entity.Component() { 
+                    Type = new Entity.ComponentType() { Category = "ping" },
+                    Compression = 0,
+                    IsActive = true,
+                    ValueType = typeof(bool).ToString(),
+                    CurrentValue = 0,
+                    Interval = 5,
+                    Name = "Host Alive"
+                    }
+                }
+            };
 
+            Devices.Insert(nDevice);
+            foreach (var item in nDevice.Components) {
+                item.Device = nDevice;
+                Components.Save(item);
+            }
+        }
 
 
     }
