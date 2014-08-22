@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MongoDB.Driver.Linq;
 
 namespace HomeAutomation.DataAccess {
     public class DatabaseFacade {
@@ -113,13 +114,14 @@ namespace HomeAutomation.DataAccess {
         }
 
         public void InitializeDatabaseStructure() {
-            var nDevice = new Entity.Device() {
-                Name = "Localhost",
-                Description = "LocalComputer",
-                LastModified = DateTime.Now,
-                IPAddress = "127.0.0.1",
-                Components = new List<Entity.Component>() { new Entity.Component() { 
-                    Type = new Entity.ComponentType() { Category = "ping" },
+            if (!DataAccess.DatabaseFacade.DatabaseManager.IsDeviceCollectionExist) {
+                var nDevice = new Entity.Device() {
+                    Name = "Localhost",
+                    Description = "LocalComputer",
+                    LastModified = DateTime.Now,
+                    IPAddress = "127.0.0.1",
+                    Components = new List<Entity.Component>() { new Entity.Component() { 
+                    Type = new Entity.ComponentType() { Category = "ping", TemplateOptions = new Dictionary<string,string>(){{"Mode","HostAlive"}} },
                     Compression = 0,
                     IsActive = true,
                     ValueType = typeof(bool).ToString(),
@@ -128,13 +130,23 @@ namespace HomeAutomation.DataAccess {
                     Name = "Host Alive"
                     }
                 }
-            };
+                };
 
-            Devices.Insert(nDevice);
-            foreach (var item in nDevice.Components) {
-                item.Device = nDevice;
-                Components.Save(item);
+                Devices.Insert(nDevice);
+                foreach (var item in nDevice.Components) {
+                    item.Device = nDevice;
+                    Components.Save(item);
+                }
             }
+
+            //Check and create other module
+            //Each new query module has to be inserted here to be registered in the database
+            if (!ComponentTypes.AsQueryable().Any(u=> u.CheckOptionsExist("Mode","Delay") & u.Category == "ping")) {
+                var nType = new Entity.ComponentType() { Category = "ping", TemplateOptions = new Dictionary<string, string>() { { "Mode", "Delay" } } };
+
+                ComponentTypes.Insert(nType);
+            }
+
         }
 
 

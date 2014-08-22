@@ -45,9 +45,9 @@ namespace HomeAutomation.DataCollector.Manager {
             //Configure database connection
             //DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseConnection(System.Configuration.ConfigurationManager.AppSettings["ConnectionString"], System.Configuration.ConfigurationManager.AppSettings["DbName"]);
 
-            if (!DataAccess.DatabaseFacade.DatabaseManager.IsDeviceCollectionExist) {
-                DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseStructure();
-            }
+            
+             DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseStructure();
+           
             
             while (!worker.CancellationPending) {
                 //Manage Timer and Query thread

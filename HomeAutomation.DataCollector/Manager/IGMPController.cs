@@ -41,6 +41,60 @@ namespace HomeAutomation.DataCollector.Manager {
         void worker_DoWork(object sender, DoWorkEventArgs e) {
             var component = (DataAccess.Entity.Component)e.Argument;
 
+            if (component.Type.TemplateOptions != null) {
+                if (component.Type.TemplateOptions.ContainsKey("Mode")) {
+                    switch (component.Type.TemplateOptions["Mode"]) {
+                        case "HostAlive" :
+                            PingHostAlive(component);
+                            break;
+                        case "Delay" :
+                            PingDelay(component);
+                            
+                            break;
+                        default:
+                            PingHostAlive(component);
+                            break;
+                    }
+                } else {
+                    PingHostAlive(component);
+                }
+            } else {
+                PingHostAlive(component);
+            }
+
+            e.Result = component;
+        }
+
+        private void PingDelay(DataAccess.Entity.Component component) {
+            var systemPing = new Ping();
+            var reply = systemPing.Send(component.Device.IPAddress);
+            var oldValue = component.CurrentValue;
+
+            if (reply.Status == IPStatus.Success) {
+                component.CurrentValue = reply.RoundtripTime;
+                component.LastContact = DateTime.Now;
+            } else {
+                component.CurrentValue = -1;
+                //component.LastContact = DateTime.Now;
+            }
+
+            //If something change let's archive it
+            if (component.CurrentValue != oldValue) {
+                var delta = Math.Abs(Convert.ToDouble(component.CurrentValue) - Convert.ToDouble(oldValue));
+                if (delta > Convert.ToDouble(component.Compression) | Convert.ToDouble(component.CurrentValue) == -1 | Convert.ToDouble(oldValue) == -1) {
+                    var nHistory = new DataAccess.Entity.ComponentValueHistory() {
+                        Component = component,
+                        TimeStamp = DateTime.Now,
+                        Value = component.CurrentValue
+                    };
+                    DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Insert(nHistory);
+                }
+            }
+
+            DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
+        }
+
+        private void PingHostAlive(DataAccess.Entity.Component component) {
             var systemPing = new Ping();
             var reply = systemPing.Send(component.Device.IPAddress);
             var oldValue = component.CurrentValue;
@@ -64,10 +118,7 @@ namespace HomeAutomation.DataCollector.Manager {
             }
 
             DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
-
-            e.Result = component;
         }
-
 
     }
 }
