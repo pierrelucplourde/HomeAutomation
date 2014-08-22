@@ -81,15 +81,100 @@ namespace HomeAutomation.DataCollector.Manager {
         }
 
         private void GetMemPercentageLeft(DataAccess.Entity.Component component) {
-            throw new NotImplementedException();
+
+            var oldValue = component.CurrentValue;
+
+            ConnectionOptions options = new ConnectionOptions();
+            options.Username = component.Options["User"];
+            options.Password = component.Options["Password"]; //TODO Encrypt Password
+            ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+            SelectQuery query = new SelectQuery();
+            query.QueryString = "SELECT * FROM Win32_OperatingSystem";
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
+            ManagementObjectCollection queryCollection = searcher.Get();
+            foreach (ManagementObject m in queryCollection) {
+                component.CurrentValue = Convert.ToDouble(m.Properties["FreePhysicalMemory"]) / Convert.ToDouble(m.Properties["TotalVisibleMemorySize"]) * 100;
+                component.LastContact = DateTime.Now;
+                break;
+            }
+
+            CompressionManager.Instance.CompressStandard(component, oldValue);
+
+            DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
+
         }
 
         private void GetMemSpaceLeft(DataAccess.Entity.Component component) {
-            throw new NotImplementedException();
+            var oldValue = component.CurrentValue;
+
+            ConnectionOptions options = new ConnectionOptions();
+            options.Username = component.Options["User"];
+            options.Password = component.Options["Password"]; //TODO Encrypt Password
+            ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+            SelectQuery query = new SelectQuery();
+            query.QueryString = "SELECT * FROM Win32_OperatingSystem";
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
+            ManagementObjectCollection queryCollection = searcher.Get();
+            foreach (ManagementObject m in queryCollection) {
+
+                component.CurrentValue = Convert.ToDouble(m.Properties["FreePhysicalMemory"]);
+                component.LastContact = DateTime.Now;
+                if (component.Options.ContainsKey("Unit")) {
+                    switch (component.Options["Unit"]) {
+                        case "KB":
+                            component.CurrentValue = Convert.ToDouble(component.CurrentValue);
+                            break;
+                        case "MB":
+                            component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024;
+                            break;
+                        case "GB":
+                            component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024;
+                            break;
+                        case "TB":
+                            component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024 / 1024;
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+
+                break;
+            }
+
+
+            CompressionManager.Instance.CompressStandard(component, oldValue);
+
+            DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
+
         }
 
         private void GetPercentageLeft(DataAccess.Entity.Component component) {
-            throw new NotImplementedException();
+            if (component.Options.ContainsKey("Disk")) {
+                var DiskToSearch = component.Options["Disk"];
+                var oldValue = component.CurrentValue;
+
+                ConnectionOptions options = new ConnectionOptions();
+                options.Username = component.Options["User"];
+                options.Password = component.Options["Password"]; //TODO Encrypt Password
+                ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+                SelectQuery query = new SelectQuery();
+                query.QueryString = "SELECT * FROM Win32_LogicalDisk";
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
+                ManagementObjectCollection queryCollection = searcher.Get();
+                foreach (ManagementObject m in queryCollection) {
+                    if (m.Properties["DeviceID"].Value == DiskToSearch) {
+                        component.CurrentValue = Convert.ToDouble(m.Properties["FreeSpace"]) / Convert.ToDouble(m.Properties["Size"]) * 100;
+                        component.LastContact = DateTime.Now;
+                        break;
+                    }
+
+                }
+
+                CompressionManager.Instance.CompressStandard(component, oldValue);
+
+                DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
+            }
         }
 
         private void GetDiskSpaceLeft(DataAccess.Entity.Component component) {
@@ -109,11 +194,32 @@ namespace HomeAutomation.DataCollector.Manager {
                     if (m.Properties["DeviceID"].Value == DiskToSearch) {
                         component.CurrentValue = Convert.ToDouble(m.Properties["FreeSpace"]);
                         component.LastContact = DateTime.Now;
+                        if (component.Options.ContainsKey("Unit")) {
+                            switch (component.Options["Unit"]) {
+                                case "KB":
+                                    component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024;
+                                    break;
+                                case "MB":
+                                    component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024;
+                                    break;
+                                case "GB":
+                                    component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024 / 1024;
+                                    break;
+                                case "TB":
+                                    component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024 / 1024 / 1024;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
                         break;
                     }
                 }
 
-                //TODO - PLP - Compress
+                CompressionManager.Instance.CompressStandard(component, oldValue);
+
+                DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
             }
         }
     }
