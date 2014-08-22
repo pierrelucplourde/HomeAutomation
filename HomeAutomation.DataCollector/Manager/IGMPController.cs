@@ -6,7 +6,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 
 namespace HomeAutomation.DataCollector.Manager {
-    class IGMPController {
+    internal class IGMPController {
 
         BackgroundWorker worker;
 
@@ -41,9 +41,9 @@ namespace HomeAutomation.DataCollector.Manager {
         void worker_DoWork(object sender, DoWorkEventArgs e) {
             var component = (DataAccess.Entity.Component)e.Argument;
 
-            if (component.Type.TemplateOptions != null) {
-                if (component.Type.TemplateOptions.ContainsKey("Mode")) {
-                    switch (component.Type.TemplateOptions["Mode"]) {
+            if (component.Options != null) {
+                if (component.Options.ContainsKey("Mode")) {
+                    switch (component.Options["Mode"]) {
                         case "HostAlive" :
                             PingHostAlive(component);
                             break;
@@ -78,18 +78,7 @@ namespace HomeAutomation.DataCollector.Manager {
                 //component.LastContact = DateTime.Now;
             }
 
-            //If something change let's archive it
-            if (component.CurrentValue != oldValue) {
-                var delta = Math.Abs(Convert.ToDouble(component.CurrentValue) - Convert.ToDouble(oldValue));
-                if (delta > Convert.ToDouble(component.Compression) | Convert.ToDouble(component.CurrentValue) == -1 | Convert.ToDouble(oldValue) == -1) {
-                    var nHistory = new DataAccess.Entity.ComponentValueHistory() {
-                        Component = component,
-                        TimeStamp = DateTime.Now,
-                        Value = component.CurrentValue
-                    };
-                    DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Insert(nHistory);
-                }
-            }
+            CompressionManager.Instance.CompressPingDelay(component, oldValue);
 
             DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
         }
@@ -107,15 +96,7 @@ namespace HomeAutomation.DataCollector.Manager {
                 //component.LastContact = DateTime.Now;
             }
 
-            //If something change let's archive it
-            if (component.CurrentValue != oldValue) {
-                var nHistory = new DataAccess.Entity.ComponentValueHistory() {
-                    Component = component,
-                    TimeStamp = DateTime.Now,
-                    Value = component.CurrentValue
-                };
-                DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Insert(nHistory);
-            }
+            CompressionManager.Instance.CompressStandard(component, oldValue);
 
             DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
         }

@@ -9,11 +9,7 @@ using System.Threading;
 namespace HomeAutomation.DataCollector.Manager {
     public class DeviceManager {
         int MaxThread = 2;
-
-        IGMPController PingQuery = new IGMPController();
-        SNMPQueryController SNMPQuery = new SNMPQueryController();
-        WMIQueryController WMIQuery = new WMIQueryController();
-
+        
         BackgroundWorker worker;
         Semaphore threadlock;
 
@@ -63,6 +59,30 @@ namespace HomeAutomation.DataCollector.Manager {
                                     threadlock.WaitOne();
                                     component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
                                     pingner.StartPing(worker_RunWorkerCompleted, component);
+
+                                    break;
+
+                                case "wmi":
+                                    WMIQueryController wmiCtl = new WMIQueryController();
+                                    threadlock.WaitOne();
+                                    component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                    wmiCtl.StartQuery(worker_RunWorkerCompleted, component);
+
+                                    break;
+
+                                case "arduino":
+                                    ArduinoRestQueryController ardCtl = new ArduinoRestQueryController();
+                                    threadlock.WaitOne();
+                                    component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                    ardCtl.StartQuery(worker_RunWorkerCompleted, component);
+
+                                    break;
+
+                                case "snmp":
+                                    SNMPQueryController snmpCtl = new SNMPQueryController();
+                                    threadlock.WaitOne();
+                                    component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                    snmpCtl.StartQuery(worker_RunWorkerCompleted, component);
 
                                     break;
                                 default:

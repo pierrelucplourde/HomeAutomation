@@ -122,7 +122,8 @@ namespace HomeAutomation.DataAccess {
                     IPAddress = "127.0.0.1",
                     Components = new List<Entity.Component>() { new Entity.Component() { 
                     Type = new Entity.ComponentType() { Category = "ping", TemplateOptions = new Dictionary<string,string>(){{"Mode","HostAlive"}} },
-                    Compression = 0,
+                    Options = new Dictionary<string,string>(){{"Mode","HostAlive"}},
+                    Compression = 1,
                     IsActive = true,
                     ValueType = typeof(bool).ToString(),
                     CurrentValue = 0,

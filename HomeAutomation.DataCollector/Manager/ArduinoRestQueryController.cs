@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 
 namespace HomeAutomation.DataCollector.Manager {
-    internal class SNMPQueryController {
+    internal class ArduinoRestQueryController {
 
         BackgroundWorker worker;
 
@@ -26,7 +26,7 @@ namespace HomeAutomation.DataCollector.Manager {
             }
         }
 
-        internal SNMPQueryController() {
+        internal ArduinoRestQueryController() {
 
         }
 
@@ -39,12 +39,11 @@ namespace HomeAutomation.DataCollector.Manager {
 
         private void worker_DoWork(object sender, DoWorkEventArgs e) {
             var component = (DataAccess.Entity.Component)e.Argument;
-            
-            //Process the snmp query
+
+            //Process the Arduino query
 
 
             e.Result = component;
         }
-
     }
 }

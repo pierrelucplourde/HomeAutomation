@@ -48,6 +48,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,6 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Manager\ArduinoRestQueryController.cs" />
+    <Compile Include="Manager\CompressionManager.cs" />
     <Compile Include="Manager\DeviceManager.cs" />
     <Compile Include="Manager\IGMPController.cs" />
     <Compile Include="Manager\SNMPQueryController.cs" />
