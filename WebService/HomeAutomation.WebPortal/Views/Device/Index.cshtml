@@ -1,0 +1,15 @@
+﻿@model List<HomeAutomation.DataAccess.Entity.Device>
+@{
+    ViewBag.Title = "Device List";
+}
+
+<h2>DeviceList</h2>
+
+@foreach (var device in Model) {
+
+    <div>
+        <span>@device.Name</span>
+        <span>@device.Description</span>
+        <span>@device.IPAddress</span>
+    </div>    
+}
