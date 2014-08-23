@@ -78,7 +78,7 @@ namespace HomeAutomation.DataCollector.Manager {
                 //component.LastContact = DateTime.Now;
             }
 
-            CompressionManager.Instance.CompressPingDelay(component, oldValue);
+            CompressionManager.Instance.CompressPingDelay(component);
 
             DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
         }
@@ -96,7 +96,7 @@ namespace HomeAutomation.DataCollector.Manager {
                 //component.LastContact = DateTime.Now;
             }
 
-            CompressionManager.Instance.CompressStandard(component, oldValue);
+            CompressionManager.Instance.CompressStandard(component);
 
             DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
         }

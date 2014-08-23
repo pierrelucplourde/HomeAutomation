@@ -26,32 +26,58 @@ namespace HomeAutomation.DataCollector.Manager {
 
 
 
-        internal void CompressStandard(DataAccess.Entity.Component component, object oldValue) {
+        internal void CompressStandard(DataAccess.Entity.Component component) {
             //If something change let's archive it
-            if (component.CurrentValue != oldValue) {
-                var delta = Math.Abs(Convert.ToDouble(component.CurrentValue) - Convert.ToDouble(oldValue));
-                if (delta >= Convert.ToDouble(component.Compression)) {
+            if (component.CurrentValue != component.LastHistoricalValue) {
+                if (component.LastHistoricalValue != null) {
+                    var delta = Math.Abs(Convert.ToDouble(component.CurrentValue) - Convert.ToDouble(component.LastHistoricalValue));
+                    if (delta >= Convert.ToDouble(component.Compression)) {
+                        var nHistory = new DataAccess.Entity.ComponentValueHistory() {
+                            Component = component,
+                            TimeStamp = DateTime.Now,
+                            Value = component.CurrentValue
+                        };
+                        DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Insert(nHistory);
+                        component.LastHistoricalValue = nHistory.Value;
+                        component.LastHistoricalContact = nHistory.TimeStamp;
+                    }
+                } else {
                     var nHistory = new DataAccess.Entity.ComponentValueHistory() {
                         Component = component,
                         TimeStamp = DateTime.Now,
                         Value = component.CurrentValue
                     };
                     DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Insert(nHistory);
+                    component.LastHistoricalValue = nHistory.Value;
+                    component.LastHistoricalContact = nHistory.TimeStamp;
                 }
             }
         }
 
-        internal void CompressPingDelay(DataAccess.Entity.Component component, object oldValue) {
+        internal void CompressPingDelay(DataAccess.Entity.Component component) {
             //If something change let's archive it
-            if (component.CurrentValue != oldValue) {
-                var delta = Math.Abs(Convert.ToDouble(component.CurrentValue) - Convert.ToDouble(oldValue));
-                if (delta > Convert.ToDouble(component.Compression) | Convert.ToDouble(component.CurrentValue) == -1 | Convert.ToDouble(oldValue) == -1) {
+            if (component.CurrentValue != component.LastHistoricalValue) {
+                if (component.LastHistoricalValue != null) {
+                    var delta = Math.Abs(Convert.ToDouble(component.CurrentValue) - Convert.ToDouble(component.LastHistoricalValue));
+                    if (delta >= Convert.ToDouble(component.Compression) | Convert.ToDouble(component.CurrentValue) == -1 | Convert.ToDouble(component.LastHistoricalValue) == -1) {
+                        var nHistory = new DataAccess.Entity.ComponentValueHistory() {
+                            Component = component,
+                            TimeStamp = DateTime.Now,
+                            Value = component.CurrentValue
+                        };
+                        DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Insert(nHistory);
+                        component.LastHistoricalValue = nHistory.Value;
+                        component.LastHistoricalContact = nHistory.TimeStamp;
+                    }
+                } else {
                     var nHistory = new DataAccess.Entity.ComponentValueHistory() {
                         Component = component,
                         TimeStamp = DateTime.Now,
                         Value = component.CurrentValue
                     };
                     DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Insert(nHistory);
+                    component.LastHistoricalValue = nHistory.Value;
+                    component.LastHistoricalContact = nHistory.TimeStamp;
                 }
             }
         }

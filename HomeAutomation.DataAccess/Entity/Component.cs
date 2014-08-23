@@ -15,20 +15,20 @@ namespace HomeAutomation.DataAccess.Entity {
         public string Description { get; set; }
 
         public decimal Compression { get; set; }
-
+        
         public decimal Interval { get; set; }
-
-        public DateTime LastContact { get; set; }
-
-        [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
-        public DateTime NextContact { get; set; }
 
         public String ValueType { get; set; }
 
         public Object CurrentValue { get; set; }
+        
+        public DateTime LastContact { get; set; }
+        
+        public Object LastHistoricalValue { get; set; }
+
+        public DateTime LastHistoricalContact { get; set; }
 
         public bool IsActive { get; set; }
-
 
         public Dictionary<String,String> Options { get; set; }
 
@@ -47,6 +47,9 @@ namespace HomeAutomation.DataAccess.Entity {
                 TypeId = new MongoDB.Driver.MongoDBRef("ComponentType", value.Id);
             }
         }
+
+        [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+        public DateTime NextContact { get; set; }
 
         public MongoDB.Driver.MongoDBRef DeviceId { get; set; }
 
