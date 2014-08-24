@@ -18,6 +18,7 @@ namespace HomeAutomation.DataAccess.Entity {
 
         public String IPAddress { get; set; }
 
+        [MongoDB.Bson.Serialization.Attributes.BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime LastModified { get; set; }
 
         public List<MongoDB.Driver.MongoDBRef> ComponentIds { get; set; }

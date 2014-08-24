@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MongoDB.Driver.Linq;
+using MongoDB.Driver.Builders;
 
 namespace HomeAutomation.WebPortal.Controllers
 {
@@ -21,11 +22,16 @@ namespace HomeAutomation.WebPortal.Controllers
         }
 
         //
-        // GET: /Device/Details/5
+        // GET: /Device/ListComponent/5
 
-        public ActionResult Details(int id)
+        public ActionResult ListComponent(String id)
         {
-            return View();
+            //var model = DataAccess.DatabaseFacade.DatabaseManager.Devices.AsQueryable().SingleOrDefault(u => u.Id.Equals(id));
+            //var model = DataAccess.DatabaseFacade.DatabaseManager.Devices.FindOneAs<DataAccess.Entity.Device>(new MongoDB.Driver.FindOneArgs(){F})
+            var bSonId = new MongoDB.Bson.ObjectId(id);
+            var query = Query<HomeAutomation.DataAccess.Entity.Device>.EQ(e => e.Id, bSonId);
+            var model = DataAccess.DatabaseFacade.DatabaseManager.Devices.FindOne(query);
+            return View(model);
         }
 
         //

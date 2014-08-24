@@ -1,0 +1,28 @@
+﻿@model HomeAutomation.DataAccess.Entity.Device
+
+@{
+    ViewBag.Title = "ListComponent";
+}
+
+<h2>ListComponent</h2>
+
+<table>
+    <tr>
+        <td>Name</td>
+        <td>Description</td>
+        <td>Type</td>
+        <td>CurrentValue</td>
+        <td>LastContact</td>
+    </tr>
+
+    @foreach (var component in Model.Components) {
+        <tr>
+            <td>@component.Name</td>
+            <td>@component.Description</td>
+            <td>@component.Type.Category</td>
+            <td>@component.CurrentValue</td>
+            <td>@component.LastContact</td>
+        </tr>
+    }
+
+</table>

@@ -300,6 +300,9 @@
   <ItemGroup>
     <Content Include="Views\Device\Index.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Device\ListComponent.cshtml" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

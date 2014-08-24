@@ -142,11 +142,11 @@ namespace HomeAutomation.DataAccess {
 
             //Check and create other module
             //Each new query module has to be inserted here to be registered in the database
-            if (!ComponentTypes.AsQueryable().Any(u=> u.CheckOptionsExist("Mode","Delay") & u.Category == "ping")) {
-                var nType = new Entity.ComponentType() { Category = "ping", TemplateOptions = new Dictionary<string, string>() { { "Mode", "Delay" } } };
-
-                ComponentTypes.Insert(nType);
-            }
+            //if (!ComponentTypes.AsQueryable().Any(u => u.TemplateOptions.Any(var => var.Key == "Mode" & var.Value == "Delay") & u.Category == "ping")) {
+            //    var nType = new Entity.ComponentType() { Category = "ping", TemplateOptions = new Dictionary<string, string>() { { "Mode", "Delay" } } };
+                
+            //    ComponentTypes.Insert(nType);
+            //}
 
         }
 

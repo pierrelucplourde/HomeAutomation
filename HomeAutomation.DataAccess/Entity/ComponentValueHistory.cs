@@ -11,6 +11,7 @@ namespace HomeAutomation.DataAccess.Entity {
         public MongoDB.Driver.MongoDBRef ComponentId { get; set; }
 
         //[MongoDB.Bson.Serialization.Attributes.BsonId]
+        [MongoDB.Bson.Serialization.Attributes.BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime TimeStamp { get; set; }
 
         [MongoDB.Bson.Serialization.Attributes.BsonIgnore]

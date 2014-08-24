@@ -21,11 +21,13 @@ namespace HomeAutomation.DataAccess.Entity {
         public String ValueType { get; set; }
 
         public Object CurrentValue { get; set; }
-        
+
+        [MongoDB.Bson.Serialization.Attributes.BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime LastContact { get; set; }
         
         public Object LastHistoricalValue { get; set; }
 
+        [MongoDB.Bson.Serialization.Attributes.BsonDateTimeOptions(Kind=DateTimeKind.Local)]
         public DateTime LastHistoricalContact { get; set; }
 
         public bool IsActive { get; set; }
