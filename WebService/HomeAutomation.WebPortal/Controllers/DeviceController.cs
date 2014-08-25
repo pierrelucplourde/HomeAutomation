@@ -39,6 +39,8 @@ namespace HomeAutomation.WebPortal.Controllers
 
         public ActionResult Create()
         {
+            
+            
             return View();
         }
 

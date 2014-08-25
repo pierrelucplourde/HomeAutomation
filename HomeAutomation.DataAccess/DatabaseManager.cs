@@ -150,6 +150,46 @@ namespace HomeAutomation.DataAccess {
 
         }
 
+        public List<String> GetPollingSelectTypes() {
+            var nList = new List<String>();
+            nList.Add("Ping");
+            nList.Add("WMI");
+            nList.Add("SNMP");
+            nList.Add("Arduino");
+
+            return nList;
+        }
+
+        public List<String> GetPollingSelectSubTypesByType(String type) {
+            var nList = new List<String>();
+
+            switch (type.ToLower()) {
+                case "ping":
+                    nList.Add("HostAlive");
+                    nList.Add("Delay");
+                    break;
+
+                case "wmi":
+                    nList.Add("DiskSpaceLeft");
+                    nList.Add("DiskPercentageLeft");
+                    nList.Add("MemSpaceLeft");
+                    nList.Add("MemPercentageLeft");
+                    nList.Add("CpuUsage");
+                    nList.Add("Custom");
+                    break;
+
+                case "arduino":
+                    nList.Add("RestApi");
+                    break;
+
+                case "snmp":
+                    nList.Add("SNMP Get");                    
+                    break;
+                default:
+                    break;
+            }
+            return nList;
+        }
 
     }
 }

@@ -53,7 +53,7 @@ namespace HomeAutomation.DataCollector.Manager {
                 foreach (var device in devices) {
                     foreach (var component in device.Components) {
                         if (component.NextContact < DateTime.Now) {
-                            switch (component.Type.Category) {
+                            switch (component.Type.Category.ToLower()) {
                                 case "ping":
                                     IGMPController pingner = new IGMPController();
                                     threadlock.WaitOne();

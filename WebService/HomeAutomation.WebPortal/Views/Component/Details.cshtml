@@ -1,0 +1,24 @@
+﻿@model HomeAutomation.DataAccess.Entity.Component
+
+@{
+    ViewBag.Title = "Detail";
+}
+
+<h2>Details</h2>
+
+<div>
+    <span>Name :@Model.Name</span><br />
+    <span>Description :@Model.Description</span><br />
+    <span>IP Adress :@Model.Device.IPAddress</span><br />
+    <span>Type :@Model.Type.Category</span><br />
+    <span>Compression :@Model.Compression</span><br />
+
+    <span>Current Value :@Model.CurrentValue</span><br />
+    <span>Last Contact :@Model.LastContact</span><br />
+    @if (Model.Options != null) { 
+        foreach (var key in @Model.Options.Keys) {
+            <span>@key :@Model.Options[key]</span><br />
+        }
+    }
+
+</div>

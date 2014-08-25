@@ -1,0 +1,36 @@
+﻿@model HomeAutomation.DataAccess.Entity.Component
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+<div>
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl })) {
+    
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Log in Form</legend>
+            <ol>
+                <li>Name : @Html.TextBoxFor(m => m.Name)</li>
+                <li>Description :@Html.TextBoxFor(m => m.Description)</li>
+                <li>IP Adress :@Html.TextBoxFor(m => m.Device.IPAddress)</li>
+                <li>Type :@Html.TextBoxFor(m => m.Type.Category)</li>
+                <li>Compression :@Html.TextBoxFor(m => m.Compression)</li>
+
+                <li>Current Value :@Html.TextBoxFor(m => m.CurrentValue)</li>
+                <li>Last Contact :@Html.TextBoxFor(m => m.LastContact)</li>
+                @if (Model.Options != null) {
+                    foreach (var key in @Model.Options.Keys) {
+                    <li>@key :@Html.TextBoxFor(m => m.Options[key])</li>
+                    }
+                }
+            </ol>
+            <input type="submit" value="Log in" />
+        </fieldset>
+    }
+
+
+</div>
