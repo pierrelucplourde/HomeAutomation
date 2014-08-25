@@ -8,11 +8,7 @@ namespace HomeAutomation.WebPortal.Controllers {
     public class HomeController : Controller {
         public ActionResult Index() {
             ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
-
-            using (var db = new HomeAutomation.WebPortal.Models.EntitiesContainer()) {
-                ViewBag.ListDevices = db.Devices.ToList();
-            }
-
+            
 
             return View();
         }

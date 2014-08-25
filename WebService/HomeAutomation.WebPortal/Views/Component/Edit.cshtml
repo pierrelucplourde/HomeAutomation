@@ -1,0 +1,38 @@
+﻿@model HomeAutomation.DataAccess.Entity.Component
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+<div>
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl })) {
+    
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Edit for Component @Model.Id.ToString()</legend>
+            <ol>
+                <li>Name : @Html.TextBoxFor(m => m.Name)</li>
+                <li>Description :@Html.TextBoxFor(m => m.Description)</li>
+                <li>Compression :@Html.TextBoxFor(m => m.Compression)</li>
+                <li>Interval :@Html.TextBoxFor(m => m.Interval)</li>
+                <li>Active ? :@Html.CheckBoxFor(m => m.IsActive)</li>
+                
+                @if (Model.Options != null) {
+                    foreach (var key in @Model.Options.Keys) {
+                        if (key == "Password") {
+                            <li>@key :@Html.Password(key, Model.Options[key])</li>
+                        } else { 
+                            <li>@key :@Html.TextBox(key, Model.Options[key])</li>
+                        }
+                    }
+                }
+            </ol>
+            <input type="submit" value="Save" />
+        </fieldset>
+    }
+
+
+</div>

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Threading;
 using System.Web.Mvc;
 using WebMatrix.WebData;
@@ -23,7 +21,14 @@ namespace HomeAutomation.WebPortal.Filters {
                 
 
                 try {
+
+                    if (DataAccess.DatabaseFacade.DatabaseManager.Database == null) {
+                        DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseConnection(System.Web.Configuration.WebConfigurationManager.ConnectionStrings["HomeAutomationMongoDB"].ConnectionString, System.Web.Configuration.WebConfigurationManager.AppSettings["DatabaseName"]); 
+                    }
                     
+                    if (!DataAccess.DatabaseFacade.DatabaseManager.IsUserCollectionExist) {
+                        DataAccess.DatabaseFacade.DatabaseManager.Users.Insert(new DataAccess.Entity.User() { Name = "Administrator", UserName = "admin", Password = "admin" });
+                    }
 
                     WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
                 } catch (Exception ex) {
