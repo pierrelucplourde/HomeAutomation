@@ -10,6 +10,9 @@
 {
     @Html.DropDownList("Type", ViewData["Type"] as List<SelectListItem>,"Select a Type")
     @Html.DropDownList("SubType", new SelectList(string.Empty, "Value", "Text"), "Select a SubType", new { style = "width:250px" })
+    @Html.Hidden("DeviceId", ViewData["DeviceId"]);
+
+    <input type="submit" value="Create New Component" />
 }
 
 

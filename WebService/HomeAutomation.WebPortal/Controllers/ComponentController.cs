@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MongoDB.Driver.Linq;
 
 namespace HomeAutomation.WebPortal.Controllers {
     public class ComponentController : Controller {
@@ -28,8 +29,9 @@ namespace HomeAutomation.WebPortal.Controllers {
         //
         // GET: /Component/Create
 
-        public ActionResult Create() {
-            ViewData["Type"] = DataAccess.DatabaseFacade.DatabaseManager.GetPollingSelectTypes().Select(u => new SelectListItem() { Text = u, Value =u }).ToList();
+        public ActionResult Create(String id) {
+            ViewData["DeviceId"] = id;
+            ViewData["Type"] = DataAccess.DatabaseFacade.DatabaseManager.GetPollingSelectTypes().Select(u => new SelectListItem() { Text = u, Value = u }).ToList();
 
             return View();
         }
@@ -40,18 +42,29 @@ namespace HomeAutomation.WebPortal.Controllers {
 
             //subtype.Insert(0,new SelectListItem())
 
-            return Json(new SelectList(subtype, "Value", "Text")); 
+            return Json(new SelectList(subtype, "Value", "Text"));
         }
 
         //
         // POST: /Component/Create
 
         [HttpPost]
-        public ActionResult Create(FormCollection collection) {
+        public ActionResult Create(String id, FormCollection collection) {
             try {
                 // TODO: Add insert logic here
+                DataAccess.Entity.Component nComponent = new DataAccess.Entity.Component();
 
-                return RedirectToAction("Index");
+                nComponent.Name = "New";
+
+                //Get the associated device
+                var bSonId = new MongoDB.Bson.ObjectId(id);
+                var query = Query<HomeAutomation.DataAccess.Entity.Device>.EQ(e => e.Id, bSonId);
+                nComponent.Device = DataAccess.DatabaseFacade.DatabaseManager.Devices.FindOne(query);
+
+                nComponent.Type = DataAccess.DatabaseFacade.DatabaseManager.ComponentTypes.AsQueryable().Single(u => u.Category == collection["Type"] & u.Mode == collection["SubType"]);
+                nComponent.Options = new Dictionary<string,string>(nComponent.Type.TemplateOptions);
+
+                return View("Edit", nComponent);
             } catch {
                 return View();
             }
@@ -102,6 +115,6 @@ namespace HomeAutomation.WebPortal.Controllers {
             }
         }
 
-        
+
     }
 }

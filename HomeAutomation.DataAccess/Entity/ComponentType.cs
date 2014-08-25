@@ -14,6 +14,8 @@ namespace HomeAutomation.DataAccess.Entity {
 
         public String Category { get; set; }
 
+        public String Mode { get; set; }
+
         public Dictionary<String, String> TemplateOptions { get; set; }
 
         internal bool CheckOptionsExist(string key, string value) {

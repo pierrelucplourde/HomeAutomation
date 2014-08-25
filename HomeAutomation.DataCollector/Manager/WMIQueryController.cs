@@ -42,30 +42,28 @@ namespace HomeAutomation.DataCollector.Manager {
             var component = (DataAccess.Entity.Component)e.Argument;
 
             //Process the WMI query
-            if (component.Options != null) {
-                if (component.Options.ContainsKey("Mode")) {
-                    switch (component.Options["Mode"]) {
-                        case "DiskSpaceLeft":
-                            GetDiskSpaceLeft(component);
-                            break;
-                        case "DiskPercentageLeft":
-                            GetPercentageLeft(component);
-                            break;
-                        case "MemSpaceLeft":
-                            GetMemSpaceLeft(component);
-                            break;
-                        case "MemPercentageLeft":
-                            GetMemPercentageLeft(component);
-                            break;
-                        case "CpuUsage":
-                            GetCPUUsage(component);
-                            break;
-                        case "Custom":
-                            GetCustomProp(component);
-                            break;
-                        default:
-                            break;
-                    }
+            if (component.Type.Mode != null) {
+                switch (component.Type.Mode.ToLower()) {
+                    case "diskspaceleft":
+                        GetDiskSpaceLeft(component);
+                        break;
+                    case "diskpercentageleft":
+                        GetPercentageLeft(component);
+                        break;
+                    case "memspaceleft":
+                        GetMemSpaceLeft(component);
+                        break;
+                    case "mempercentageleft":
+                        GetMemPercentageLeft(component);
+                        break;
+                    case "cpuusage":
+                        GetCPUUsage(component);
+                        break;
+                    case "custom":
+                        GetCustomProp(component);
+                        break;
+                    default:
+                        break;
                 }
             }
             e.Result = component;

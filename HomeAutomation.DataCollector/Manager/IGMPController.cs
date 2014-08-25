@@ -41,13 +41,12 @@ namespace HomeAutomation.DataCollector.Manager {
         void worker_DoWork(object sender, DoWorkEventArgs e) {
             var component = (DataAccess.Entity.Component)e.Argument;
 
-            if (component.Options != null) {
-                if (component.Options.ContainsKey("Mode")) {
-                    switch (component.Options["Mode"]) {
-                        case "HostAlive" :
+            if (component.Type.Mode != null) {
+                switch (component.Type.Mode.ToLower()) {
+                        case "hostalive" :
                             PingHostAlive(component);
                             break;
-                        case "Delay" :
+                        case "delay" :
                             PingDelay(component);
                             
                             break;
@@ -55,9 +54,7 @@ namespace HomeAutomation.DataCollector.Manager {
                             PingHostAlive(component);
                             break;
                     }
-                } else {
-                    PingHostAlive(component);
-                }
+               
             } else {
                 PingHostAlive(component);
             }

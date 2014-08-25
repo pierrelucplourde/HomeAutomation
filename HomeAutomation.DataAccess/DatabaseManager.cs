@@ -121,8 +121,7 @@ namespace HomeAutomation.DataAccess {
                     LastModified = DateTime.Now,
                     IPAddress = "127.0.0.1",
                     Components = new List<Entity.Component>() { new Entity.Component() { 
-                    Type = new Entity.ComponentType() { Category = "ping", TemplateOptions = new Dictionary<string,string>(){{"Mode","HostAlive"}} },
-                    Options = new Dictionary<string,string>(){{"Mode","HostAlive"}},
+                    Type = new Entity.ComponentType() { Category = "Ping", Mode = "HostAlive" },
                     Compression = 1,
                     IsActive = true,
                     ValueType = typeof(bool).ToString(),
@@ -142,12 +141,46 @@ namespace HomeAutomation.DataAccess {
 
             //Check and create other module
             //Each new query module has to be inserted here to be registered in the database
-            //if (!ComponentTypes.AsQueryable().Any(u => u.TemplateOptions.Any(var => var.Key == "Mode" & var.Value == "Delay") & u.Category == "ping")) {
-            //    var nType = new Entity.ComponentType() { Category = "ping", TemplateOptions = new Dictionary<string, string>() { { "Mode", "Delay" } } };
-                
-            //    ComponentTypes.Insert(nType);
-            //}
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "HostAlive" & u.Category == "Ping")) {
+                var nType = new Entity.ComponentType() { Category = "Ping", Mode = "HostAlive" };
 
+                ComponentTypes.Insert(nType);
+            }
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "Delay" & u.Category == "Ping")) {
+                var nType = new Entity.ComponentType() { Category = "Ping", Mode = "Delay" };
+                
+                ComponentTypes.Insert(nType);
+            }
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "DiskSpaceLeft" & u.Category == "WMI")) {
+                var nType = new Entity.ComponentType() { Category = "WMI", Mode = "DiskSpaceLeft", TemplateOptions = new Dictionary<string, string>() { { "Disk", "" }, { "User", "" }, { "Password", "" }, { "Unit", "" } } };
+
+                ComponentTypes.Insert(nType);
+            }
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "DiskPercentageLeft" & u.Category == "WMI")) {
+                var nType = new Entity.ComponentType() { Category = "WMI", Mode = "DiskPercentageLeft", TemplateOptions = new Dictionary<string, string>() { { "Disk", "" }, { "User", "" }, { "Password", "" } } };
+
+                ComponentTypes.Insert(nType);
+            }
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "MemSpaceLeft" & u.Category == "WMI")) {
+                var nType = new Entity.ComponentType() { Category = "WMI", Mode = "MemSpaceLeft", TemplateOptions = new Dictionary<string, string>() {  { "User", "" }, { "Password", "" }, { "Unit", "" } } };
+
+                ComponentTypes.Insert(nType);
+            }
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "MemPercentageLeft" & u.Category == "WMI")) {
+                var nType = new Entity.ComponentType() { Category = "WMI", Mode = "MemPercentageLeft", TemplateOptions = new Dictionary<string, string>() {  { "User", "" }, { "Password", "" } } };
+
+                ComponentTypes.Insert(nType);
+            }
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "CpuUsage" & u.Category == "WMI")) {
+                var nType = new Entity.ComponentType() { Category = "WMI", Mode = "CpuUsage", TemplateOptions = new Dictionary<string, string>() { { "User", "" }, { "Password", "" } } };
+
+                ComponentTypes.Insert(nType);
+            }
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "SNMP Get" & u.Category == "SNMP")) {
+                var nType = new Entity.ComponentType() { Category = "SNMP", Mode = "SNMP Get", TemplateOptions = new Dictionary<string, string>() { { "OID", "" }, { "CommunityString", "" } } };
+
+                ComponentTypes.Insert(nType);
+            }
         }
 
         public List<String> GetPollingSelectTypes() {
