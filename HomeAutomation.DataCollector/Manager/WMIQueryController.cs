@@ -85,7 +85,7 @@ namespace HomeAutomation.DataCollector.Manager {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
             ManagementObjectCollection queryCollection = searcher.Get();
             foreach (ManagementObject m in queryCollection) {
-                component.CurrentValue = Convert.ToDouble(m.Properties["LoadPercentage"]);
+                component.CurrentValue = Convert.ToDouble(m.Properties["LoadPercentage"].Value);
                 component.LastContact = DateTime.Now;
                 break;
             }
@@ -106,7 +106,7 @@ namespace HomeAutomation.DataCollector.Manager {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
             ManagementObjectCollection queryCollection = searcher.Get();
             foreach (ManagementObject m in queryCollection) {
-                component.CurrentValue = Convert.ToDouble(m.Properties["FreePhysicalMemory"]) / Convert.ToDouble(m.Properties["TotalVisibleMemorySize"]) * 100;
+                component.CurrentValue = Convert.ToDouble(m.Properties["FreePhysicalMemory"].Value) / Convert.ToDouble(m.Properties["TotalVisibleMemorySize"].Value) * 100;
                 component.LastContact = DateTime.Now;
                 break;
             }
@@ -127,7 +127,7 @@ namespace HomeAutomation.DataCollector.Manager {
             ManagementObjectCollection queryCollection = searcher.Get();
             foreach (ManagementObject m in queryCollection) {
 
-                component.CurrentValue = Convert.ToDouble(m.Properties["FreePhysicalMemory"]);
+                component.CurrentValue = Convert.ToDouble(m.Properties["FreePhysicalMemory"].Value);
                 component.LastContact = DateTime.Now;
                 if (component.Options.ContainsKey("Unit")) {
                     switch (component.Options["Unit"]) {
@@ -157,18 +157,29 @@ namespace HomeAutomation.DataCollector.Manager {
             if (component.Options.ContainsKey("Disk")) {
                 var DiskToSearch = component.Options["Disk"];
                 var oldValue = component.CurrentValue;
+                ConnectionOptions options = null;
 
-                ConnectionOptions options = new ConnectionOptions();
-                options.Username = component.Options["User"];
-                options.Password = component.Options["Password"]; //TODO Encrypt Password
-                ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+                if (component.Options.ContainsKey("User")) {
+                    if (!String.IsNullOrEmpty( component.Options["User"])) {
+                        options = new ConnectionOptions();
+                        options.Username = component.Options["User"];
+                        options.Password = component.Options["Password"]; //TODO Encrypt Password 
+                    }
+                }
+                ManagementScope scope;
+                if (options != null) {
+                    scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+                } else {
+                    scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2");
+
+                }
                 SelectQuery query = new SelectQuery();
                 query.QueryString = "SELECT * FROM Win32_LogicalDisk";
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
                 ManagementObjectCollection queryCollection = searcher.Get();
                 foreach (ManagementObject m in queryCollection) {
                     if ((string)m.Properties["DeviceID"].Value == DiskToSearch) {
-                        component.CurrentValue = Convert.ToDouble(m.Properties["FreeSpace"]) / Convert.ToDouble(m.Properties["Size"]) * 100;
+                        component.CurrentValue = Convert.ToDouble(m.Properties["FreeSpace"].Value) / Convert.ToDouble(m.Properties["Size"].Value) * 100;
                         component.LastContact = DateTime.Now;
                         break;
                     }
@@ -186,14 +197,14 @@ namespace HomeAutomation.DataCollector.Manager {
                 ConnectionOptions options = new ConnectionOptions();
                 options.Username = component.Options["User"];
                 options.Password = component.Options["Password"]; //TODO Encrypt Password
-                ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+                ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2");
                 SelectQuery query = new SelectQuery();
                 query.QueryString = "SELECT * FROM Win32_LogicalDisk";
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
                 ManagementObjectCollection queryCollection = searcher.Get();
                 foreach (ManagementObject m in queryCollection) {
                     if ((string)m.Properties["DeviceID"].Value == DiskToSearch) {
-                        component.CurrentValue = Convert.ToDouble(m.Properties["FreeSpace"]);
+                        component.CurrentValue = Convert.ToDouble(m.Properties["FreeSpace"].Value);
                         component.LastContact = DateTime.Now;
                         if (component.Options.ContainsKey("Unit")) {
                             switch (component.Options["Unit"]) {

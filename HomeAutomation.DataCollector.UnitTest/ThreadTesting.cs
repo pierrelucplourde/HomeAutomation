@@ -10,7 +10,7 @@ namespace HomeAutomation.DataCollector.UnitTest {
 
             var DeviceMan = new DataCollector.Manager.DeviceManager();
             DeviceMan.StartDataCollecting();
-            System.Threading.Thread.Sleep(60000);
+            System.Threading.Thread.Sleep(120000);
             DeviceMan.StopDataCollecting();
         }
 
