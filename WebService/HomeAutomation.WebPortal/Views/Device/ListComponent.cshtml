@@ -7,26 +7,27 @@
 <h2>ListComponent</h2>
 
 <a href="~/Component/Create/@Model.Id">Add new component</a>
-
-<table>
-    <tr>
-        <td>Name</td>
-        <td>Description</td>
-        <td>Type</td>
-        <td>CurrentValue</td>
-        <td>LastContact</td>
-        <td>Action</td>
-    </tr>
-
-    @foreach (var component in Model.Components) {
+<div id="Form">
+    <table>
         <tr>
-            <td>@component.Name</td>
-            <td>@component.Description</td>
-            <td>@component.Type.Category</td>
-            <td>@component.CurrentValue</td>
-            <td>@component.LastContact</td>
-            <td><a href="~/Component/Details/@component.Id">List Component</a><a href="~/Component/Edit/@component.Id">Edit</a> <a href="~/Component/Delete/@component.Id">Delete</a></td>
+            <td>Name</td>
+            <td>Description</td>
+            <td>Type</td>
+            <td>CurrentValue</td>
+            <td>LastContact</td>
+            <td>Action</td>
         </tr>
-    }
 
-</table>
+        @foreach (var component in Model.Components) {
+            <tr>
+                <td>@component.Name</td>
+                <td>@component.Description</td>
+                <td>@component.Type.Category</td>
+                <td>@component.CurrentValue</td>
+                <td>@component.LastContact</td>
+                <td><a href="~/Component/Details/@component.Id">List Component</a><a href="~/Component/Edit/@component.Id">Edit</a> <a href="~/Component/Delete/@component.Id">Delete</a></td>
+            </tr>
+        }
+
+    </table>
+</div>

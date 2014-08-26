@@ -62,7 +62,9 @@ namespace HomeAutomation.WebPortal.Controllers {
                 nComponent.Device = DataAccess.DatabaseFacade.DatabaseManager.Devices.FindOne(query);
 
                 nComponent.Type = DataAccess.DatabaseFacade.DatabaseManager.ComponentTypes.AsQueryable().Single(u => u.Category == collection["Type"] & u.Mode == collection["SubType"]);
-                nComponent.Options = new Dictionary<string,string>(nComponent.Type.TemplateOptions);
+                if (nComponent.Type.TemplateOptions != null) { 
+                    nComponent.Options = new Dictionary<string,string>(nComponent.Type.TemplateOptions);
+                }
                 nComponent.IsActive = false;
 
                 DataAccess.DatabaseFacade.DatabaseManager.Components.Insert(nComponent);

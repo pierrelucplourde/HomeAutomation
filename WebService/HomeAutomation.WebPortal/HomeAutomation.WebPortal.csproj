@@ -239,6 +239,7 @@
     <Content Include="Images\thumbs\vector-flower-fullscreen.jpg" />
     <Content Include="Scripts\init.js" />
     <Content Include="Scripts\jquery-1.6.1.min.js" />
+    <None Include="Properties\PublishProfiles\VM-02.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.min.js" />
@@ -284,6 +285,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Scripts\jquery-2.1.1.min.map" />
+    <Content Include="Views\Device\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

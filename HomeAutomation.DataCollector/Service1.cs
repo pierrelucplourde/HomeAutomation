@@ -15,6 +15,7 @@ namespace HomeAutomation.DataCollector {
         private bool stopping;
         private ManualResetEvent stoppedEvent;
         private StreamWriter logFile;
+        private Manager.DeviceManager DeviceManager;
 
         public Service1() {
             InitializeComponent();
@@ -38,7 +39,10 @@ namespace HomeAutomation.DataCollector {
                 this.eventLog1.WriteEntry("HomeAutomation in OnStart.");
 
                 // Queue the main service function for execution in a worker thread.
-                ThreadPool.QueueUserWorkItem(new WaitCallback(ServiceWorkerThread));
+                DeviceManager = new Manager.DeviceManager();
+                DeviceManager.StartDataCollecting();
+
+                //ThreadPool.QueueUserWorkItem(new WaitCallback(ServiceWorkerThread));
                 logFile.WriteLine(DateTime.Now + " - " + "OnStart End");
             } catch (Exception ex) {
                 logFile.WriteLine(DateTime.Now + " - " + "OnStart Catch");
@@ -61,13 +65,7 @@ namespace HomeAutomation.DataCollector {
             try {
                 logFile.WriteLine(DateTime.Now + " - " + "WorkerThread Start");
 
-                try {
-                    this.eventLog1.WriteEntry("ConfigFile :" + AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-                    this.eventLog1.Close();
-                    
-                } catch (Exception Ex) {
-                    this.eventLog1.WriteEntry("Erreur " + Ex.Message);
-                }
+                
                 // Periodically check if the service is stopping.
                 while (!this.stopping) {
                     // Perform main service function here...
@@ -114,7 +112,8 @@ namespace HomeAutomation.DataCollector {
                 // Indicate that the service is stopping and wait for the finish 
                 // of the main service function (ServiceWorkerThread).
                 this.stopping = true;
-                this.stoppedEvent.WaitOne();
+                DeviceManager.StopDataCollecting();
+                //this.stoppedEvent.WaitOne();
 
                 
                 logFile.WriteLine(DateTime.Now + " - " + "OnStop End");

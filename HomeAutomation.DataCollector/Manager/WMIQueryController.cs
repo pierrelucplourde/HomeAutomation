@@ -76,10 +76,22 @@ namespace HomeAutomation.DataCollector.Manager {
         private void GetCPUUsage(DataAccess.Entity.Component component) {
             var oldValue = component.CurrentValue;
 
-            ConnectionOptions options = new ConnectionOptions();
-            options.Username = component.Options["User"];
-            options.Password = component.Options["Password"]; //TODO Encrypt Password
-            ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+            ConnectionOptions options = null;
+
+            if (component.Options.ContainsKey("User")) {
+                if (!String.IsNullOrEmpty(component.Options["User"])) {
+                    options = new ConnectionOptions();
+                    options.Username = component.Options["User"];
+                    options.Password = component.Options["Password"]; //TODO Encrypt Password 
+                }
+            }
+            ManagementScope scope;
+            if (options != null) {
+                scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+            } else {
+                scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2");
+
+            }
             SelectQuery query = new SelectQuery();
             query.QueryString = "SELECT * FROM Win32_Processor";
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
@@ -97,10 +109,22 @@ namespace HomeAutomation.DataCollector.Manager {
 
             var oldValue = component.CurrentValue;
 
-            ConnectionOptions options = new ConnectionOptions();
-            options.Username = component.Options["User"];
-            options.Password = component.Options["Password"]; //TODO Encrypt Password
-            ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+            ConnectionOptions options = null;
+
+            if (component.Options.ContainsKey("User")) {
+                if (!String.IsNullOrEmpty(component.Options["User"])) {
+                    options = new ConnectionOptions();
+                    options.Username = component.Options["User"];
+                    options.Password = component.Options["Password"]; //TODO Encrypt Password 
+                }
+            }
+            ManagementScope scope;
+            if (options != null) {
+                scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+            } else {
+                scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2");
+
+            }
             SelectQuery query = new SelectQuery();
             query.QueryString = "SELECT * FROM Win32_OperatingSystem";
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
@@ -117,10 +141,22 @@ namespace HomeAutomation.DataCollector.Manager {
         private void GetMemSpaceLeft(DataAccess.Entity.Component component) {
             var oldValue = component.CurrentValue;
 
-            ConnectionOptions options = new ConnectionOptions();
-            options.Username = component.Options["User"];
-            options.Password = component.Options["Password"]; //TODO Encrypt Password
-            ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+            ConnectionOptions options = null;
+
+            if (component.Options.ContainsKey("User")) {
+                if (!String.IsNullOrEmpty(component.Options["User"])) {
+                    options = new ConnectionOptions();
+                    options.Username = component.Options["User"];
+                    options.Password = component.Options["Password"]; //TODO Encrypt Password 
+                }
+            }
+            ManagementScope scope;
+            if (options != null) {
+                scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+            } else {
+                scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2");
+
+            }
             SelectQuery query = new SelectQuery();
             query.QueryString = "SELECT * FROM Win32_OperatingSystem";
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
@@ -194,10 +230,22 @@ namespace HomeAutomation.DataCollector.Manager {
                 var DiskToSearch = component.Options["Disk"];
                 var oldValue = component.CurrentValue;
 
-                ConnectionOptions options = new ConnectionOptions();
-                options.Username = component.Options["User"];
-                options.Password = component.Options["Password"]; //TODO Encrypt Password
-                ManagementScope scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2");
+                ConnectionOptions options = null;
+
+                if (component.Options.ContainsKey("User")) {
+                    if (!String.IsNullOrEmpty(component.Options["User"])) {
+                        options = new ConnectionOptions();
+                        options.Username = component.Options["User"];
+                        options.Password = component.Options["Password"]; //TODO Encrypt Password 
+                    }
+                }
+                ManagementScope scope;
+                if (options != null) {
+                    scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2", options);
+                } else {
+                    scope = new ManagementScope(@"\\" + component.Device.IPAddress + @"\root\cimv2");
+
+                }
                 SelectQuery query = new SelectQuery();
                 query.QueryString = "SELECT * FROM Win32_LogicalDisk";
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);

@@ -39,9 +39,9 @@ namespace HomeAutomation.WebPortal.Controllers
 
         public ActionResult Create()
         {
+            var nDevice = new DataAccess.Entity.Device();
             
-            
-            return View();
+            return View("Edit",nDevice);
         }
 
         //
@@ -53,38 +53,60 @@ namespace HomeAutomation.WebPortal.Controllers
             try
             {
                 // TODO: Add insert logic here
+                var nDevice = new DataAccess.Entity.Device();
+
+                nDevice.Name = collection["Name"];
+                nDevice.Description = collection["Description"];
+                nDevice.Location = collection["Location"];
+                nDevice.IPAddress = collection["IPAddress"];
+
+                DataAccess.DatabaseFacade.DatabaseManager.Devices.Insert(nDevice);
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Index");
             }
         }
 
         //
         // GET: /Device/Edit/5
 
-        public ActionResult Edit(int id)
+        public ActionResult Edit(String id)
         {
-            return View();
+            var bSonId = new MongoDB.Bson.ObjectId(id);
+            var query = Query<HomeAutomation.DataAccess.Entity.Device>.EQ(e => e.Id, bSonId);
+            var Device = DataAccess.DatabaseFacade.DatabaseManager.Devices.FindOne(query);
+
+            return View(Device);
         }
 
         //
         // POST: /Device/Edit/5
 
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(String id, FormCollection collection)
         {
             try
             {
                 // TODO: Add update logic here
+                var bSonId = new MongoDB.Bson.ObjectId(id);
+                var query = Query<HomeAutomation.DataAccess.Entity.Device>.EQ(e => e.Id, bSonId);
+                var nDevice = DataAccess.DatabaseFacade.DatabaseManager.Devices.FindOne(query);
+
+                nDevice.Name = collection["Name"];
+                nDevice.Description = collection["Description"];
+                nDevice.Location = collection["Location"];
+                nDevice.IPAddress = collection["IPAddress"];
+
+                DataAccess.DatabaseFacade.DatabaseManager.Devices.Save(nDevice);
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Index");
             }
         }
 

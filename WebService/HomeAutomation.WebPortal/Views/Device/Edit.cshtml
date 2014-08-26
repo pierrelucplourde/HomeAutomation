@@ -1,0 +1,27 @@
+﻿@model HomeAutomation.DataAccess.Entity.Device
+@{
+    ViewBag.Title = "Edit Device";
+}
+
+<h2>Edit Device</h2>
+
+<div id="Form">
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl })) {
+    
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Edit for Device @Model.Id.ToString()</legend>
+            <ol>
+                <li>Name : @Html.TextBoxFor(m => m.Name)</li>
+                <li>Description :@Html.TextBoxFor(m => m.Description)</li>
+                <li>Location :@Html.TextBoxFor(m => m.Location)</li>
+                <li>IP Address :@Html.TextBoxFor(m => m.IPAddress)</li>
+                
+            </ol>
+            <input type="submit" value="Save" />
+        </fieldset>
+    }
+
+
+</div>

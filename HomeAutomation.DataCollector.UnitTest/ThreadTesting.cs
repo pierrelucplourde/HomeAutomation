@@ -6,7 +6,7 @@ namespace HomeAutomation.DataCollector.UnitTest {
     public class ThreadTesting {
         [TestMethod]
         public void ThreadTest_Simple() {
-            DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseConnection("mongodb://localhost", "HomeAutomation");
+            //DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseConnection("mongodb://localhost", "HomeAutomation");
 
             var DeviceMan = new DataCollector.Manager.DeviceManager();
             DeviceMan.StartDataCollecting();

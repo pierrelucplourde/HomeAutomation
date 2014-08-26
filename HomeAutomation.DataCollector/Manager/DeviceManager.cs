@@ -39,7 +39,7 @@ namespace HomeAutomation.DataCollector.Manager {
 
         void worker_DoWork(object sender, DoWorkEventArgs e) {
             //Configure database connection
-            //DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseConnection(System.Configuration.ConfigurationManager.AppSettings["ConnectionString"], System.Configuration.ConfigurationManager.AppSettings["DbName"]);
+            DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseConnection(System.Configuration.ConfigurationManager.AppSettings["ConnectionString"], System.Configuration.ConfigurationManager.AppSettings["DbName"]);
 
 
             DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseStructure();

@@ -36,11 +36,12 @@
             this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.serviceProcessInstaller1.Password = null;
             this.serviceProcessInstaller1.Username = null;
+            this.serviceProcessInstaller1.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.serviceProcessInstaller1_AfterInstall);
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "Service to keep alive a certain application.";
-            this.serviceInstaller1.DisplayName = "KeepAliveService";
+            this.serviceInstaller1.Description = "Monitor And Control for HomeAutomation";
+            this.serviceInstaller1.DisplayName = "HomeAutomation";
             this.serviceInstaller1.ServiceName = "KeepAliveService";
             // 
             // ProjectInstaller

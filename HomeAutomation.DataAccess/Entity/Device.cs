@@ -26,6 +26,9 @@ namespace HomeAutomation.DataAccess.Entity {
         [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
         public List<Component> Components {
             get {
+                if (ComponentIds == null) {
+                    return new List<Component>();
+                }
                 return ComponentIds.Select(u => DatabaseFacade.DatabaseManager.Database.FetchDBRefAs<Component>(u)).ToList();
             }
             set {
@@ -37,5 +40,10 @@ namespace HomeAutomation.DataAccess.Entity {
                 ComponentIds = value.Select(u => new MongoDB.Driver.MongoDBRef("Component", u.Id)).ToList();
             }
         }
+
+        public Device() {
+            ComponentIds = new List<MongoDB.Driver.MongoDBRef>();
+        }
+
     }
 }

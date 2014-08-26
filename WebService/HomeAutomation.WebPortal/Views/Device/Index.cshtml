@@ -4,22 +4,26 @@
 }
 
 <h2>DeviceList</h2>
-<table>
-    <tr>
-        <td>Name</td>
-        <td>Description</td>
-        <td>IP Address</td>
-        <td>Action</td>
-    </tr>
 
-    @foreach (var device in Model) {
-
+<div id="Form">
+    <a href="~/Device/Create">Add new device</a>
+    <table>
         <tr>
-            <td>@device.Name</td>
-            <td>@device.Description</td>
-            <td>@device.IPAddress</td>
-            <td><a href="~/Device/ListComponent/@device.Id">List Component</a><a href="~/Device/Edit/@device.Id">Edit</a> <a href="~/Device/Delete/@device.Id">Delete</a></td>
+            <td>Name</td>
+            <td>Description</td>
+            <td>IP Address</td>
+            <td>Action</td>
         </tr>
-    }
 
-</table>
+        @foreach (var device in Model) {
+
+            <tr>
+                <td>@device.Name</td>
+                <td>@device.Description</td>
+                <td>@device.IPAddress</td>
+                <td><a href="~/Device/ListComponent/@device.Id">List Component</a><a href="~/Device/Edit/@device.Id">Edit</a> <a href="~/Device/Delete/@device.Id">Delete</a></td>
+            </tr>
+        }
+
+    </table>
+</div>
