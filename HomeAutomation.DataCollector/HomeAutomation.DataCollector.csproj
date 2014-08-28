@@ -62,6 +62,7 @@
     <Compile Include="Manager\DeviceManager.cs" />
     <Compile Include="Manager\IGMPController.cs" />
     <Compile Include="Manager\SNMPQueryController.cs" />
+    <Compile Include="Manager\VMwareController.cs" />
     <Compile Include="Manager\WMIQueryController.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -69,6 +70,7 @@
     <Compile Include="ProjectInstaller.designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HostNumericSensorInfo.cs" />
     <Compile Include="Service1.cs">
       <SubType>Component</SubType>
     </Compile>

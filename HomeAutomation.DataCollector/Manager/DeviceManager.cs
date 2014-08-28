@@ -49,6 +49,7 @@ namespace HomeAutomation.DataCollector.Manager {
                 //Manage Timer and Query thread
                 var devices = DataAccess.DatabaseFacade.DatabaseManager.Devices.AsQueryable().ToList();
                 var MinNextInterval = DateTime.Now.AddMinutes(10);
+                var VMwareSensorsCtl = new VMwareController();
 
                 foreach (var device in devices) {
                     if (device.Components != null) {
@@ -85,6 +86,13 @@ namespace HomeAutomation.DataCollector.Manager {
                                         threadlock.WaitOne();
                                         component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
                                         snmpCtl.StartQuery(worker_RunWorkerCompleted, component);
+
+                                        break;
+                                    case "vmware":
+                                        //SNMPQueryController snmpCtl = new SNMPQueryController();
+                                        threadlock.WaitOne();
+                                        component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                        VMwareSensorsCtl.StartQuery(worker_RunWorkerCompleted, component);
 
                                         break;
                                     default:

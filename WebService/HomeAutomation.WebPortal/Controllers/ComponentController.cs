@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MongoDB.Driver.Linq;
+using Google.DataTable.Net.Wrapper;
+
 
 namespace HomeAutomation.WebPortal.Controllers {
     public class ComponentController : Controller {
@@ -24,6 +26,45 @@ namespace HomeAutomation.WebPortal.Controllers {
             var model = DataAccess.DatabaseFacade.DatabaseManager.Components.FindOne(query);
             return View(model);
 
+        }
+
+        public String GetDataTableJson(String id) {
+            DataTable dt = new DataTable();
+
+            var bSonId = new MongoDB.Bson.ObjectId(id);
+            var query = Query<HomeAutomation.DataAccess.Entity.Component>.EQ(e => e.Id, bSonId);
+            var model = DataAccess.DatabaseFacade.DatabaseManager.Components.FindOne(query);
+
+            //Act -----------------
+            dt.AddColumn(new Column(ColumnType.Datetime, "Date","Date"));
+            dt.AddColumn(new Column(ColumnType.Number, "Value",model.Name));
+
+           // var bSonId = new MongoDB.Driver.MongoDBRef("Component",new MongoDB.Bson.ObjectId( id));
+            var refDocument = new MongoDB.Bson.BsonDocument { 
+            {"$ref", "Component"}, 
+            {"$id", new MongoDB.Bson.ObjectId(id)} 
+        };
+            var queryHist = Query.EQ("ComponentId", refDocument);
+            
+            var values = DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Find(queryHist);
+            
+
+            foreach (var value in values) {
+                var row = dt.NewRow();
+                row.AddCellRange(new[] { new Cell(value.TimeStamp), new Cell(value.Value) });
+                dt.AddRow(row);
+            }
+            var rowCur = dt.NewRow();
+            rowCur.AddCellRange(new[] { new Cell(model.LastContact), new Cell(model.CurrentValue) });
+            dt.AddRow(rowCur);
+
+            //row1.AddCellRange(new[] { new Cell(2012), new Cell(150) });
+            //row2.AddCellRange(new[] { new Cell(2013), new Cell(100) });
+
+            //dt.AddRow(row1);
+            //dt.AddRow(row2);
+
+            return dt.GetJson();
         }
 
         //

@@ -181,6 +181,11 @@ namespace HomeAutomation.DataAccess {
 
                 ComponentTypes.Insert(nType);
             }
+            if (!ComponentTypes.AsQueryable().Any(u => u.Mode == "ESXi Sensor" & u.Category == "VMWare")) {
+                var nType = new Entity.ComponentType() { Category = "VMWare", Mode = "ESXi Sensor", TemplateOptions = new Dictionary<string, string>() { { "User", "" }, { "Password", "" }, { "SensorName", "" } } };
+
+                ComponentTypes.Insert(nType);
+            }
         }
 
         public List<String> GetPollingSelectTypes() {
@@ -189,6 +194,7 @@ namespace HomeAutomation.DataAccess {
             nList.Add("WMI");
             nList.Add("SNMP");
             nList.Add("Arduino");
+            nList.Add("VMWare");
 
             return nList;
         }
@@ -217,6 +223,9 @@ namespace HomeAutomation.DataAccess {
 
                 case "snmp":
                     nList.Add("SNMP Get");                    
+                    break;
+                case "vmware":
+                    nList.Add("ESXi Sensor");
                     break;
                 default:
                     break;

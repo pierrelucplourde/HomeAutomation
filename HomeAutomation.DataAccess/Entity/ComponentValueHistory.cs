@@ -8,6 +8,9 @@ namespace HomeAutomation.DataAccess.Entity {
     public class ComponentValueHistory {
 
         //[MongoDB.Bson.Serialization.Attributes.BsonId]
+        [MongoDB.Bson.Serialization.Attributes.BsonId]
+        public ObjectId Id { get; set; }
+
         public MongoDB.Driver.MongoDBRef ComponentId { get; set; }
 
         //[MongoDB.Bson.Serialization.Attributes.BsonId]
