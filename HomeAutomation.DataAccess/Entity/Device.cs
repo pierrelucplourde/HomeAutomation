@@ -14,6 +14,8 @@ namespace HomeAutomation.DataAccess.Entity {
 
         public String Description { get; set; }
 
+        public String OwnerEmail { get; set; }
+
         public String Location { get; set; }
 
         public String IPAddress { get; set; }

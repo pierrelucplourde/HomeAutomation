@@ -39,34 +39,40 @@ namespace HomeAutomation.DataCollector.Manager {
         }
 
         private void worker_DoWork(object sender, DoWorkEventArgs e) {
-            var component = (DataAccess.Entity.Component)e.Argument;
+            try {
+                var component = (DataAccess.Entity.Component)e.Argument;
 
-            //Process the WMI query
-            if (component.Type.Mode != null) {
-                switch (component.Type.Mode.ToLower()) {
-                    case "diskspaceleft":
-                        GetDiskSpaceLeft(component);
-                        break;
-                    case "diskpercentageleft":
-                        GetPercentageLeft(component);
-                        break;
-                    case "memspaceleft":
-                        GetMemSpaceLeft(component);
-                        break;
-                    case "mempercentageleft":
-                        GetMemPercentageLeft(component);
-                        break;
-                    case "cpuusage":
-                        GetCPUUsage(component);
-                        break;
-                    case "custom":
-                        GetCustomProp(component);
-                        break;
-                    default:
-                        break;
+                //Process the WMI query
+                if (component.Type.Mode != null) {
+                    switch (component.Type.Mode.ToLower()) {
+                        case "diskspaceleft":
+                            GetDiskSpaceLeft(component);
+                            break;
+                        case "diskpercentageleft":
+                            GetPercentageLeft(component);
+                            break;
+                        case "memspaceleft":
+                            GetMemSpaceLeft(component);
+                            break;
+                        case "mempercentageleft":
+                            GetMemPercentageLeft(component);
+                            break;
+                        case "cpuusage":
+                            GetCPUUsage(component);
+                            break;
+                        case "custom":
+                            GetCustomProp(component);
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                e.Result = component;
+            } catch (Exception ex) {
+                var logFile = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "error.log", true);
+                logFile.WriteLine(ex.ToString());
+                logFile.Close();
             }
-            e.Result = component;
         }
 
         private void GetCustomProp(DataAccess.Entity.Component component) {
@@ -97,7 +103,7 @@ namespace HomeAutomation.DataCollector.Manager {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
             ManagementObjectCollection queryCollection = searcher.Get();
             foreach (ManagementObject m in queryCollection) {
-                component.CurrentValue = Convert.ToDouble(m.Properties["LoadPercentage"].Value);
+                component.SetNewValue(Convert.ToDouble(m.Properties["LoadPercentage"].Value));
                 component.LastContact = DateTime.Now;
                 break;
             }
@@ -130,7 +136,7 @@ namespace HomeAutomation.DataCollector.Manager {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
             ManagementObjectCollection queryCollection = searcher.Get();
             foreach (ManagementObject m in queryCollection) {
-                component.CurrentValue = Convert.ToDouble(m.Properties["FreePhysicalMemory"].Value) / Convert.ToDouble(m.Properties["TotalVisibleMemorySize"].Value) * 100;
+                component.SetNewValue(Convert.ToDouble(m.Properties["FreePhysicalMemory"].Value) / Convert.ToDouble(m.Properties["TotalVisibleMemorySize"].Value) * 100);
                 component.LastContact = DateTime.Now;
                 break;
             }
@@ -163,26 +169,27 @@ namespace HomeAutomation.DataCollector.Manager {
             ManagementObjectCollection queryCollection = searcher.Get();
             foreach (ManagementObject m in queryCollection) {
 
-                component.CurrentValue = Convert.ToDouble(m.Properties["FreePhysicalMemory"].Value);
-                component.LastContact = DateTime.Now;
+                var value = Convert.ToDouble(m.Properties["FreePhysicalMemory"].Value);
                 if (component.Options.ContainsKey("Unit")) {
                     switch (component.Options["Unit"]) {
                         case "KB":
-                            component.CurrentValue = Convert.ToDouble(component.CurrentValue);
                             break;
                         case "MB":
-                            component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024;
+                            value = value / 1024;
                             break;
                         case "GB":
-                            component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024;
+                            value = value / 1024 / 1024;
                             break;
                         case "TB":
-                            component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024 / 1024;
+                            value = value / 1024 / 1024 / 1024;
                             break;
                         default:
                             break;
                     }
                 }
+                component.SetNewValue(value);
+                component.LastContact = DateTime.Now;
+
                 break;
             }
             CompressionManager.Instance.CompressStandard(component);
@@ -196,7 +203,7 @@ namespace HomeAutomation.DataCollector.Manager {
                 ConnectionOptions options = null;
 
                 if (component.Options.ContainsKey("User")) {
-                    if (!String.IsNullOrEmpty( component.Options["User"])) {
+                    if (!String.IsNullOrEmpty(component.Options["User"])) {
                         options = new ConnectionOptions();
                         options.Username = component.Options["User"];
                         options.Password = component.Options["Password"]; //TODO Encrypt Password 
@@ -215,7 +222,7 @@ namespace HomeAutomation.DataCollector.Manager {
                 ManagementObjectCollection queryCollection = searcher.Get();
                 foreach (ManagementObject m in queryCollection) {
                     if ((string)m.Properties["DeviceID"].Value == DiskToSearch) {
-                        component.CurrentValue = Convert.ToDouble(m.Properties["FreeSpace"].Value) / Convert.ToDouble(m.Properties["Size"].Value) * 100;
+                        component.SetNewValue(Convert.ToDouble(m.Properties["FreeSpace"].Value) / Convert.ToDouble(m.Properties["Size"].Value) * 100);
                         component.LastContact = DateTime.Now;
                         break;
                     }
@@ -252,26 +259,28 @@ namespace HomeAutomation.DataCollector.Manager {
                 ManagementObjectCollection queryCollection = searcher.Get();
                 foreach (ManagementObject m in queryCollection) {
                     if ((string)m.Properties["DeviceID"].Value == DiskToSearch) {
-                        component.CurrentValue = Convert.ToDouble(m.Properties["FreeSpace"].Value);
-                        component.LastContact = DateTime.Now;
+                        var value = Convert.ToDouble(m.Properties["FreeSpace"].Value);
                         if (component.Options.ContainsKey("Unit")) {
                             switch (component.Options["Unit"]) {
                                 case "KB":
-                                    component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024;
+                                    value = value / 1024;
                                     break;
                                 case "MB":
-                                    component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024;
+                                    value = value / 1024 / 1024;
                                     break;
                                 case "GB":
-                                    component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024 / 1024;
+                                    value = value / 1024 / 1024 / 1024;
                                     break;
                                 case "TB":
-                                    component.CurrentValue = Convert.ToDouble(component.CurrentValue) / 1024 / 1024 / 1024 / 1024;
+                                    value = value / 1024 / 1024 / 1024 / 1024;
                                     break;
                                 default:
                                     break;
                             }
                         }
+                        component.SetNewValue(value);
+                        component.LastContact = DateTime.Now;
+
                         break;
                     }
                 }

@@ -59,6 +59,7 @@ namespace HomeAutomation.WebPortal.Controllers
                 nDevice.Description = collection["Description"];
                 nDevice.Location = collection["Location"];
                 nDevice.IPAddress = collection["IPAddress"];
+                nDevice.OwnerEmail = collection["OwnerEmail"];
 
                 DataAccess.DatabaseFacade.DatabaseManager.Devices.Insert(nDevice);
 
@@ -99,6 +100,7 @@ namespace HomeAutomation.WebPortal.Controllers
                 nDevice.Description = collection["Description"];
                 nDevice.Location = collection["Location"];
                 nDevice.IPAddress = collection["IPAddress"];
+                nDevice.OwnerEmail = collection["OwnerEmail"];
 
                 DataAccess.DatabaseFacade.DatabaseManager.Devices.Save(nDevice);
 

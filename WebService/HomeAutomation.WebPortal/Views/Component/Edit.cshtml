@@ -18,6 +18,8 @@
                 <li>Description :@Html.TextBoxFor(m => m.Description)</li>
                 <li>Compression :@Html.TextBoxFor(m => m.Compression)</li>
                 <li>Interval :@Html.TextBoxFor(m => m.Interval)</li>
+                <li>Min Threshold :@Html.TextBoxFor(m => m.MinThreshold)</li>
+                <li>Max Threshold :@Html.TextBoxFor(m => m.MaxThreshold)</li>
                 <li>Active ? :@Html.CheckBoxFor(m => m.IsActive)</li>
                 
                 @if (Model.Options != null) {

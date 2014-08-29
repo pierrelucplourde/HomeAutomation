@@ -39,6 +39,7 @@ namespace HomeAutomation.DataCollector.Manager {
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e) {
+            try { 
             var component = (DataAccess.Entity.Component)e.Argument;
 
             if (component.Type.Mode != null) {
@@ -60,6 +61,11 @@ namespace HomeAutomation.DataCollector.Manager {
             }
 
             e.Result = component;
+            } catch (Exception ex) {
+                var logFile = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "error.log", true);
+                logFile.WriteLine(ex.ToString());
+                logFile.Close();
+            }
         }
 
         private void PingDelay(DataAccess.Entity.Component component) {
@@ -68,10 +74,11 @@ namespace HomeAutomation.DataCollector.Manager {
             var oldValue = component.CurrentValue;
 
             if (reply.Status == IPStatus.Success) {
-                component.CurrentValue = reply.RoundtripTime;
+                
+                component.SetNewValue( reply.RoundtripTime);
                 component.LastContact = DateTime.Now;
             } else {
-                component.CurrentValue = -1;
+                component.SetNewValue( -1);
                 //component.LastContact = DateTime.Now;
             }
 
@@ -86,16 +93,17 @@ namespace HomeAutomation.DataCollector.Manager {
             var oldValue = component.CurrentValue;
 
             if (reply.Status == IPStatus.Success) {
-                component.CurrentValue = 1;
+                component.SetNewValue(1);
                 component.LastContact = DateTime.Now;
             } else {
-                component.CurrentValue = 0;
+                component.SetNewValue(0);
                 //component.LastContact = DateTime.Now;
             }
 
             CompressionManager.Instance.CompressStandard(component);
 
             DataAccess.DatabaseFacade.DatabaseManager.Components.Save(component);
+
         }
 
     }

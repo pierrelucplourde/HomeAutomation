@@ -1,0 +1,32 @@
+﻿@model List<HomeAutomation.DataAccess.Entity.Configuration>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<div id="Form">
+    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl })) {
+    
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Edit Configuration</legend>
+            <ol>
+                
+                @if (Model != null) {
+                    foreach (var item in @Model) {
+                        if (item.Name.Contains("Password")) {
+                            <li>@item.Name :@Html.Password(item.Name, item.Value)</li>
+                        } else { 
+                            <li>@item.Name :@Html.TextBox(item.Name, item.Value)</li>
+                        }
+                    }
+                }
+            </ol>
+            <input type="submit" value="Save" />
+        </fieldset>
+    }
+
+
+</div>

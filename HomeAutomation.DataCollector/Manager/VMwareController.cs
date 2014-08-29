@@ -40,25 +40,31 @@ namespace HomeAutomation.DataCollector.Manager {
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e) {
-             var component = (DataAccess.Entity.Component)e.Argument;
+            try {
+                var component = (DataAccess.Entity.Component)e.Argument;
 
-             if (component.Type.Mode != null) {
-                 switch (component.Type.Mode.ToLower()) {
-                     case "esxi sensor":
-                         GetSensorValue(component);
-                         break;
-                     default:
-                         
-                         break;
-                 }
+                if (component.Type.Mode != null) {
+                    switch (component.Type.Mode.ToLower()) {
+                        case "esxi sensor":
+                            GetSensorValue(component);
+                            break;
+                        default:
 
-             } 
+                            break;
+                    }
 
-            e.Result = component;
+                }
+
+                e.Result = component;
+            } catch (Exception ex) {
+                var logFile = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "error.log", true);
+                logFile.WriteLine(ex.ToString());
+                logFile.Close();
+            }
         }
 
         private void GetSensorValue(DataAccess.Entity.Component component) {
-           
+
             String substringXML;
             try {
                 if (component.Options.ContainsKey("SensorName")) {
@@ -94,7 +100,7 @@ namespace HomeAutomation.DataCollector.Manager {
 
                     var SensorInfo = SensorsInfos.Where(u => u.Name.Contains(component.Options["SensorName"])).FirstOrDefault();
                     if (SensorInfo != null) {
-                        component.CurrentValue = Math.Abs(SensorInfo.CurrentReading / 100);
+                        component.SetNewValue(Math.Abs(SensorInfo.CurrentReading / 100));
                         component.LastContact = DateTime.Now;
 
                         CompressionManager.Instance.CompressStandard(component);

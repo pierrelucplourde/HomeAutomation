@@ -9,10 +9,10 @@ namespace HomeAutomation.DataCollector.Manager {
         public void TestWMIDiskSpace() {
             DataAccess.DatabaseFacade.DatabaseManager.InitializeDatabaseConnection("mongodb://localhost", "HomeAutomation");
 
-               var refDocument = new MongoDB.Bson.BsonDocument { 
-            {"$ref", "Component"}, 
-            {"$id", new MongoDB.Bson.ObjectId("53fc96c0f59e1008ace5649d")} 
-        };
+            var refDocument = new MongoDB.Bson.BsonDocument { 
+                {"$ref", "Component"}, 
+                {"$id", new MongoDB.Bson.ObjectId("53fc96c0f59e1008ace5649d")} 
+                };
             var query = Query.EQ("ComponentId", refDocument);
             var test = query.ToString();
             var values = DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Find(query);

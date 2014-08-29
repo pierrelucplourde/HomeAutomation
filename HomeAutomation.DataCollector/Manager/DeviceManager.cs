@@ -47,71 +47,77 @@ namespace HomeAutomation.DataCollector.Manager {
 
             while (!worker.CancellationPending) {
                 //Manage Timer and Query thread
-                var devices = DataAccess.DatabaseFacade.DatabaseManager.Devices.AsQueryable().ToList();
-                var MinNextInterval = DateTime.Now.AddMinutes(10);
-                var VMwareSensorsCtl = new VMwareController();
+                try {
+                    var devices = DataAccess.DatabaseFacade.DatabaseManager.Devices.AsQueryable().ToList();
+                    var MinNextInterval = DateTime.Now.AddMinutes(10);
+                    var VMwareSensorsCtl = new VMwareController();
 
-                foreach (var device in devices) {
-                    if (device.Components != null) {
-                        foreach (var component in device.Components) {
-                            if (component.NextContact < DateTime.Now & component.IsActive) {
-                                //Decide which poller to use
-                                switch (component.Type.Category.ToLower()) {
-                                    case "ping":
-                                        IGMPController pingner = new IGMPController();
-                                        threadlock.WaitOne();
-                                        component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
-                                        pingner.StartPing(worker_RunWorkerCompleted, component);
+                    foreach (var device in devices) {
+                        if (device.Components != null) {
+                            foreach (var component in device.Components) {
+                                if (component.NextContact < DateTime.Now & component.IsActive) {
+                                    //Decide which poller to use
+                                    switch (component.Type.Category.ToLower()) {
+                                        case "ping":
+                                            IGMPController pingner = new IGMPController();
+                                            threadlock.WaitOne();
+                                            component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                            pingner.StartPing(worker_RunWorkerCompleted, component);
 
-                                        break;
+                                            break;
 
-                                    case "wmi":
-                                        WMIQueryController wmiCtl = new WMIQueryController();
-                                        threadlock.WaitOne();
-                                        component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
-                                        wmiCtl.StartQuery(worker_RunWorkerCompleted, component);
+                                        case "wmi":
+                                            WMIQueryController wmiCtl = new WMIQueryController();
+                                            threadlock.WaitOne();
+                                            component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                            wmiCtl.StartQuery(worker_RunWorkerCompleted, component);
 
-                                        break;
+                                            break;
 
-                                    case "arduino":
-                                        ArduinoRestQueryController ardCtl = new ArduinoRestQueryController();
-                                        threadlock.WaitOne();
-                                        component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
-                                        ardCtl.StartQuery(worker_RunWorkerCompleted, component);
+                                        case "arduino":
+                                            ArduinoRestQueryController ardCtl = new ArduinoRestQueryController();
+                                            threadlock.WaitOne();
+                                            component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                            ardCtl.StartQuery(worker_RunWorkerCompleted, component);
 
-                                        break;
+                                            break;
 
-                                    case "snmp":
-                                        SNMPQueryController snmpCtl = new SNMPQueryController();
-                                        threadlock.WaitOne();
-                                        component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
-                                        snmpCtl.StartQuery(worker_RunWorkerCompleted, component);
+                                        case "snmp":
+                                            SNMPQueryController snmpCtl = new SNMPQueryController();
+                                            threadlock.WaitOne();
+                                            component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                            snmpCtl.StartQuery(worker_RunWorkerCompleted, component);
 
-                                        break;
-                                    case "vmware":
-                                        //SNMPQueryController snmpCtl = new SNMPQueryController();
-                                        threadlock.WaitOne();
-                                        component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
-                                        VMwareSensorsCtl.StartQuery(worker_RunWorkerCompleted, component);
+                                            break;
+                                        case "vmware":
+                                            //SNMPQueryController snmpCtl = new SNMPQueryController();
+                                            threadlock.WaitOne();
+                                            component.NextContact = DateTime.Now.AddMinutes(Convert.ToDouble(component.Interval));
+                                            VMwareSensorsCtl.StartQuery(worker_RunWorkerCompleted, component);
 
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                if (component.NextContact < MinNextInterval) {
-                                    MinNextInterval = component.NextContact;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    if (component.NextContact < MinNextInterval) {
+                                        MinNextInterval = component.NextContact;
+                                    }
                                 }
                             }
                         }
                     }
+
+
+                    var spanToWait = MinNextInterval - DateTime.Now;
+                    while (MinNextInterval > DateTime.Now & !worker.CancellationPending) {
+                        Thread.Sleep(10000);
+                    }
+
+                } catch (Exception ex) {
+                    var logFile = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "error.log", true);
+                    logFile.WriteLine(ex.ToString());
+                    logFile.Close();
                 }
-
-                var spanToWait = MinNextInterval - DateTime.Now;
-                while (MinNextInterval > DateTime.Now & !worker.CancellationPending) {
-                    Thread.Sleep(10000);
-                }
-
-
             }
 
             //Close database connection

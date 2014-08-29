@@ -46,9 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseManager.cs" />
+    <Compile Include="EmailManager.cs" />
     <Compile Include="Entity\Component.cs" />
     <Compile Include="Entity\ComponentType.cs" />
     <Compile Include="Entity\ComponentValueHistory.cs" />
+    <Compile Include="Entity\Configuration.cs" />
     <Compile Include="Entity\Device.cs" />
     <Compile Include="Entity\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

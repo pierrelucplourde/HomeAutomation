@@ -81,6 +81,15 @@ namespace HomeAutomation.DataAccess {
             }
         }
 
+        public MongoDB.Driver.MongoCollection<Entity.Configuration> Configurations {
+            get {
+                if (Database != null) {
+                    return Database.GetCollection<Entity.Configuration>("Configuration");
+                }
+                return null;
+            }
+        }
+
         public bool IsUserCollectionExist {
             get {
                 if (Database != null) {
@@ -185,6 +194,18 @@ namespace HomeAutomation.DataAccess {
                 var nType = new Entity.ComponentType() { Category = "VMWare", Mode = "ESXi Sensor", TemplateOptions = new Dictionary<string, string>() { { "User", "" }, { "Password", "" }, { "SensorName", "" } } };
 
                 ComponentTypes.Insert(nType);
+            }
+
+            //Configuration
+            if (!Configurations.AsQueryable().Any(u => u.Name == "FromEmailAdress")) {
+                var nConf = new Entity.Configuration() { Name = "FromEmailAdress" };
+
+                Configurations.Insert(nConf);
+            }
+            if (!Configurations.AsQueryable().Any(u => u.Name == "MailServer")) {
+                var nConf = new Entity.Configuration() { Name = "MailServer" };
+
+                Configurations.Insert(nConf);
             }
         }
 

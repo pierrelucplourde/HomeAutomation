@@ -36,18 +36,18 @@ namespace HomeAutomation.WebPortal.Controllers {
             var model = DataAccess.DatabaseFacade.DatabaseManager.Components.FindOne(query);
 
             //Act -----------------
-            dt.AddColumn(new Column(ColumnType.Datetime, "Date","Date"));
-            dt.AddColumn(new Column(ColumnType.Number, "Value",model.Name));
+            dt.AddColumn(new Column(ColumnType.Datetime, "Date", "Date"));
+            dt.AddColumn(new Column(ColumnType.Number, "Value", model.Name));
 
-           // var bSonId = new MongoDB.Driver.MongoDBRef("Component",new MongoDB.Bson.ObjectId( id));
+            // var bSonId = new MongoDB.Driver.MongoDBRef("Component",new MongoDB.Bson.ObjectId( id));
             var refDocument = new MongoDB.Bson.BsonDocument { 
             {"$ref", "Component"}, 
             {"$id", new MongoDB.Bson.ObjectId(id)} 
         };
             var queryHist = Query.EQ("ComponentId", refDocument);
-            
+
             var values = DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Find(queryHist);
-            
+
 
             foreach (var value in values) {
                 var row = dt.NewRow();
@@ -103,8 +103,8 @@ namespace HomeAutomation.WebPortal.Controllers {
                 nComponent.Device = DataAccess.DatabaseFacade.DatabaseManager.Devices.FindOne(query);
 
                 nComponent.Type = DataAccess.DatabaseFacade.DatabaseManager.ComponentTypes.AsQueryable().Single(u => u.Category == collection["Type"] & u.Mode == collection["SubType"]);
-                if (nComponent.Type.TemplateOptions != null) { 
-                    nComponent.Options = new Dictionary<string,string>(nComponent.Type.TemplateOptions);
+                if (nComponent.Type.TemplateOptions != null) {
+                    nComponent.Options = new Dictionary<string, string>(nComponent.Type.TemplateOptions);
                 }
                 nComponent.IsActive = false;
 
@@ -139,19 +139,19 @@ namespace HomeAutomation.WebPortal.Controllers {
         public ActionResult Edit(String id, FormCollection collection) {
             try {
                 var modComponent = DataAccess.DatabaseFacade.DatabaseManager.Components.AsQueryable().SingleOrDefault(u => u.Id == new MongoDB.Bson.ObjectId(id));
-                
+
                 // TODO: Add update logic here
                 if (modComponent != null) {
                     foreach (var key in collection.Keys) {
                         var keyStr = key.ToString();
                         switch (keyStr) {
-                            case "Name" :
+                            case "Name":
                                 modComponent.Name = collection[keyStr];
                                 break;
-                                case "Description" :
+                            case "Description":
                                 modComponent.Description = collection[keyStr];
                                 break;
-                                case "Compression" :
+                            case "Compression":
                                 try {
                                     modComponent.Compression = Convert.ToDecimal(collection[keyStr], System.Globalization.CultureInfo.CurrentCulture);
                                 } catch {
@@ -162,10 +162,24 @@ namespace HomeAutomation.WebPortal.Controllers {
                                     }
                                 }
                                 break;
-                                case "Interval" :
+                            case "MinThreshold":
+                                if (String.IsNullOrEmpty(collection[keyStr])) {
+                                    modComponent.MinThreshold = null;
+                                } else {
+                                    modComponent.MinThreshold = Convert.ToDouble(collection[keyStr]);
+                                }
+                                break;
+                            case "MaxThreshold":
+                                if (String.IsNullOrEmpty(collection[keyStr])) {
+                                    modComponent.MaxThreshold = null;
+                                } else {
+                                    modComponent.MaxThreshold = Convert.ToDouble(collection[keyStr]);
+                                }
+                                break;
+                            case "Interval":
                                 modComponent.Interval = Convert.ToInt32(collection[keyStr]);
                                 break;
-                                case "IsActive" :
+                            case "IsActive":
                                 modComponent.IsActive = Convert.ToBoolean(collection[keyStr].Split(',').First());
                                 break;
                             default:
@@ -174,8 +188,8 @@ namespace HomeAutomation.WebPortal.Controllers {
                                 }
                                 if (modComponent.Options.ContainsKey(keyStr)) {
                                     modComponent.Options[keyStr] = collection[keyStr];
-                                } else { 
-                                modComponent.Options.Add(keyStr, collection[keyStr]);
+                                } else {
+                                    modComponent.Options.Add(keyStr, collection[keyStr]);
                                 }
                                 break;
                         }
@@ -185,8 +199,8 @@ namespace HomeAutomation.WebPortal.Controllers {
                 }
 
                 return RedirectToAction("Details", new { id = id });
-                
-            } catch(Exception ex){
+
+            } catch (Exception ex) {
                 return RedirectToAction("Edit", new { id = id });
             }
         }
