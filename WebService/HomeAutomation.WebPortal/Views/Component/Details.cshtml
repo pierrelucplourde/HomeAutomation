@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Detail";
+    ViewBag.Id = "DetailComponent" + Model.Id;
 }
 
 <h2>Details</h2>
@@ -31,31 +32,35 @@
 </div>
 
 
-<div id="chart_div" style="width: 900px; height: 500px;"></div>
+
+<div id="chart_div_@Model.Id" style="height: 600px;"></div>
 
 @section PageScript{
     <script type="text/javascript">
-        google.load("visualization", "1", { packages: ["corechart"] });
-        google.setOnLoadCallback(drawChart);
-        function drawChart() {
+        //alert("Test");
+        
+        
 
-            var jsonData = $.ajax({
+            $.ajax({
                 url: "/Component/GetDataTableJson/@Model.Id",
                 dataType: "json",
-                async: false
-            }).responseText;
+                success: function (json) {
+                    //alert(json);
+                    // Create our data table out of JSON data loaded from server.
+                    var data = new google.visualization.DataTable(json);
 
-            // Create our data table out of JSON data loaded from server.
-            var data = new google.visualization.DataTable(jsonData);
+                    var options = {
+                        title: 'History'
+                    };
 
-            var options = {
-                title: 'History'
-            };
+                    // Instantiate and draw our chart, passing in some options.
+                    var chart = new google.visualization.LineChart(document.getElementById('chart_div_@Model.Id'));
+                    chart.draw(data, options);
+                    
+                }
+            });
 
-            // Instantiate and draw our chart, passing in some options.
-            var chart =
-        new google.visualization.LineChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
-        }
+          
     </script>
+    
 }

@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "History of components";
+    ViewBag.Id = "History";
+}
+
+<h2>History</h2>
+
+<form>
+    <fieldset data-role="controlgroup" data-type="horizontal" data-inline="true">
+        <legend>Date an Time Range:</legend>
+        <input type="radio" id="custom" value="custom" name="daterange"><label for="custom">Custom</label>
+        <input type="radio" id="year" value="year" name="daterange"><label for="year">Year</label>
+        <input type="radio" id="month" value="month" name="daterange"><label for="month">Month</label>
+        <input type="radio" id="week" value="week" name="daterange"><label for="week">Week</label>
+        <input type="radio" id="day" value="day" name="daterange" checked="checked"><label for="day">Day</label>
+        <input type="radio" id="12h" value="12h" name="daterange"><label for="12h">Last 12h</label>
+    </fieldset>
+
+<button class="ui-btn ui-corner-all" id="HistoryDateRangeSubmit">Refresh</button>
+</form>
+
+
+<div id="chart_div" style="height: 600px;"></div>
+
+@section PageScript{
+    <script type="text/javascript">
+        google.load("visualization", "1", { packages: ["corechart"] });
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+
+            var jsonData = $.ajax({
+                url: "/Component/GetDataTableJson",
+
+                dataType: "json",
+                async: false
+            }).responseText;
+
+            // Create our data table out of JSON data loaded from server.
+            var data = new google.visualization.DataTable(jsonData);
+
+            var options = {
+                title: 'History'
+            };
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart =
+        new google.visualization.LineChart(document.getElementById('chart_div_history'));
+            chart.draw(data, options);
+        }
+
+        $('#HistoryDateRangeSubmit').click(function () {
+            var daterange = $('input:radio[name=daterange]:checked').val();
+            if (daterange == "") {
+                return false;
+            }
+            var message = 'daterange=' + daterange;
+            $.ajax({
+                url: '/Component/GetDataTableJson',
+                type: 'POST',
+                data: message, // An object with the key 'submit' and value 'true;
+                success: function (json) {
+                    //alert("Your bookmark has been saved");
+                    var data = new google.visualization.DataTable(json);
+
+                    var options = {
+                        title: 'History'
+                    };
+
+                    // Instantiate and draw our chart, passing in some options.
+                    var chart = new google.visualization.LineChart(document.getElementById('chart_div_history'));
+                    chart.draw(data, options);
+                }
+            });
+
+        });
+    </script>
+}

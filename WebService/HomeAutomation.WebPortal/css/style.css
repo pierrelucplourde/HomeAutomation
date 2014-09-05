@@ -87,7 +87,7 @@ body {
     font-size: 16px;
     line-height: 25px;
     color: #3B3B3B;
-    background: /* url(../images/25-pixel-baseline.png) left top repeat, */ url(../images/bg.png) left top repeat ;
+    background: url(../images/bg.png) left top repeat !important;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 1);
 }
 
@@ -214,7 +214,7 @@ header {
 .content-wrap section {
     position: relative;
     padding: 125px 0 25px 0;
-    background: url(../images/section-sep.png) repeat-x left 25px;
+    background: url(../images/section-sep.png) repeat-x left 25px !important;
 }
 .content-wrap section section {
     background: none;
@@ -362,13 +362,13 @@ header nav ul li {
     float: left;
 }
 header nav ul a:link, header nav ul a:visited {
-    color: #c5c4c4;
+    color: #c5c4c4 !important;
     margin-right: 20px;
-    text-shadow: 0 -1px 0 rgba(10, 10, 10, 1);
+    text-shadow: 0 -1px 0 rgba(10, 10, 10, 1) !important;
 }
 header nav ul a:hover,
 header nav ul a:active {
-    color: #17a231
+    color: #17a231 !important
 }
 
 /* -----------------------------------------
@@ -732,8 +732,8 @@ footer p.footer-text {
 }
 footer .footer-content {
     position: relative;
-    width: 900px;
-    top: -105px;
+    width: 940px;
+    top: -100px;
 }
 footer ul.footer-menu {
     float: left;

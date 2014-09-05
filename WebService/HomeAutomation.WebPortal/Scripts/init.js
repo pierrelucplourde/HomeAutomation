@@ -1,39 +1,39 @@
-
+google.load("visualization", "1", { packages: ["corechart"] });
 /* Nivo Slider */
-$(window).load(function() {
+//$(window).load(function() {
 
-    $('#slider').nivoSlider({directionNavHide:false});
+//    $('#slider').nivoSlider({directionNavHide:false});
 
-});
+//});
 
-$(document).ready(function(){
+//$(document).ready(function(){
 
-    /* Fancy Box */
-    $('a.lightbox').fancybox({
-        'titlePosition'	: 'over',
-        'padding'       : 16,
-        'opacity'		: true,
-		'overlayShow'	: false,
-		'transitionIn'	: 'elastic',
-		'transitionOut'	: 'elastic'
-  	});
-   // youtube videos with fancy box
-   $('a.lightbox-video').click(function() {
+//    /* Fancy Box */
+//    $('a.lightbox').fancybox({
+//        'titlePosition'	: 'over',
+//        'padding'       : 16,
+//        'opacity'		: true,
+//		'overlayShow'	: false,
+//		'transitionIn'	: 'elastic',
+//		'transitionOut'	: 'elastic'
+//  	});
+//   // youtube videos with fancy box
+//   $('a.lightbox-video').click(function() {
 
-        $.fancybox( {
-            'titlePosition'	: 'over',
-            'padding'       : 16,
-            'opacity'		: true,
-		    'overlayShow'	: false,
-		    'transitionIn'	: 'elastic',
-		    'transitionOut'	: 'elastic',
-            'href'          : this.href.replace(new RegExp("watch\\?v=", "i"), 'v/'),
-            'type'          : 'swf',
-            'swf'           : {'wmode':'transparent','allowfullscreen':'true'}
+//        $.fancybox( {
+//            'titlePosition'	: 'over',
+//            'padding'       : 16,
+//            'opacity'		: true,
+//		    'overlayShow'	: false,
+//		    'transitionIn'	: 'elastic',
+//		    'transitionOut'	: 'elastic',
+//            'href'          : this.href.replace(new RegExp("watch\\?v=", "i"), 'v/'),
+//            'type'          : 'swf',
+//            'swf'           : {'wmode':'transparent','allowfullscreen':'true'}
 
-          });
-            return false;
-    });
+//          });
+//            return false;
+//    });
 
     // Fade in/out on hover
     /*
@@ -44,6 +44,6 @@ $(document).ready(function(){
         $(this).fadeTo("slow", 0.6);
     });
     */
-});
+//});
 
 

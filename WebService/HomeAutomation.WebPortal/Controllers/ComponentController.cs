@@ -17,6 +17,10 @@ namespace HomeAutomation.WebPortal.Controllers {
             return View();
         }
 
+        public ActionResult History() {
+            return View();
+        }
+
         //
         // GET: /Component/Details/5
 
@@ -27,6 +31,18 @@ namespace HomeAutomation.WebPortal.Controllers {
             return View(model);
 
         }
+
+        //public String GetDataTableJson() {
+        //    DataTable dt = new DataTable();
+
+          
+        //    //Act -----------------
+        //    dt.AddColumn(new Column(ColumnType.Datetime, "Date", "Date"));
+        //    dt.AddColumn(new Column(ColumnType.Number, "Value", "Test"));
+
+        //    return dt.GetJson();
+
+        //}
 
         public String GetDataTableJson(String id) {
             DataTable dt = new DataTable();
