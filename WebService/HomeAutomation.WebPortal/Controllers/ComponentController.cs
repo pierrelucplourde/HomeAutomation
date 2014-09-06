@@ -10,6 +10,8 @@ using Google.DataTable.Net.Wrapper;
 
 namespace HomeAutomation.WebPortal.Controllers {
     public class ComponentController : Controller {
+
+
         //
         // GET: /Component/
 
@@ -18,6 +20,9 @@ namespace HomeAutomation.WebPortal.Controllers {
         }
 
         public ActionResult History() {
+
+            ViewBag.ListComponent = DataAccess.DatabaseFacade.DatabaseManager.Components.AsQueryable().ToList();
+
             return View();
         }
 
@@ -35,7 +40,7 @@ namespace HomeAutomation.WebPortal.Controllers {
         //public String GetDataTableJson() {
         //    DataTable dt = new DataTable();
 
-          
+
         //    //Act -----------------
         //    dt.AddColumn(new Column(ColumnType.Datetime, "Date", "Date"));
         //    dt.AddColumn(new Column(ColumnType.Number, "Value", "Test"));
@@ -44,35 +49,167 @@ namespace HomeAutomation.WebPortal.Controllers {
 
         //}
 
+        [HttpPost]
+        public ActionResult SelectComponents(FormCollection collection) {
+            List<String> HistorySelectedComponentId = new List<string>();
+
+            if (this.Session["HistorySelectedComponentId"] != null) {
+                HistorySelectedComponentId.AddRange(this.Session["HistorySelectedComponentId"].ToString().Split(','));
+            }
+
+            if (collection["components"] != "null") {
+
+                //ViewBag.SelectedComponentIDS = collection["components"];
+                HistorySelectedComponentId.AddRange(collection["components"].ToString().Split(','));
+
+
+            }
+
+
+
+            HistorySelectedComponentId = HistorySelectedComponentId.Where(u => !String.IsNullOrEmpty(u)).Distinct().ToList();
+            this.Session["HistorySelectedComponentId"] = String.Join(",", HistorySelectedComponentId);
+            ViewBag.SelectedComponentIDS = this.Session["HistorySelectedComponentId"];
+            var Components = new List<HomeAutomation.DataAccess.Entity.Component>();
+            if (HistorySelectedComponentId.Any()) {
+                var ListBsonId = HistorySelectedComponentId.Select(u => new MongoDB.Bson.ObjectId(u)).ToList();
+
+                Components = DataAccess.DatabaseFacade.DatabaseManager.Components.AsQueryable().Where(u => ListBsonId.Contains(u.Id)).ToList();
+            }
+
+            return PartialView("_HistorySelectedComponentPartial", Components);
+        }
+
+
         public String GetDataTableJson(String id) {
+            if (id != null) {
+                DataTable dt = new DataTable();
+
+                var bSonId = new MongoDB.Bson.ObjectId(id);
+                var query = Query<HomeAutomation.DataAccess.Entity.Component>.EQ(e => e.Id, bSonId);
+                var model = DataAccess.DatabaseFacade.DatabaseManager.Components.FindOne(query);
+
+                //Act -----------------
+                dt.AddColumn(new Column(ColumnType.Datetime, "Date", "Date"));
+                dt.AddColumn(new Column(ColumnType.Number, "Value", model.Name));
+
+                // var bSonId = new MongoDB.Driver.MongoDBRef("Component",new MongoDB.Bson.ObjectId( id));
+                var refDocument = new MongoDB.Bson.BsonDocument { 
+                    {"$ref", "Component"}, 
+                    {"$id", new MongoDB.Bson.ObjectId(id)} 
+                };
+                var queryHist = Query.EQ("ComponentId", refDocument);
+
+                var values = DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Find(queryHist);
+
+
+                foreach (var value in values) {
+                    var row = dt.NewRow();
+                    row.AddCellRange(new[] { new Cell(value.TimeStamp), new Cell(value.Value) });
+                    dt.AddRow(row);
+                }
+                var rowCur = dt.NewRow();
+                rowCur.AddCellRange(new[] { new Cell(model.LastContact), new Cell(model.CurrentValue) });
+                dt.AddRow(rowCur);
+
+                //row1.AddCellRange(new[] { new Cell(2012), new Cell(150) });
+                //row2.AddCellRange(new[] { new Cell(2013), new Cell(100) });
+
+                //dt.AddRow(row1);
+                //dt.AddRow(row2);
+
+                return dt.GetJson();
+            } else {
+                DataTable dt = new DataTable();
+
+
+                //Act -----------------
+                dt.AddColumn(new Column(ColumnType.Datetime, "Date", "Date"));
+                dt.AddColumn(new Column(ColumnType.Number, "Value", "Test"));
+
+                return dt.GetJson();
+            }
+        }
+
+        [HttpPost]
+        public String GetDataTableJson(FormCollection collection) {
             DataTable dt = new DataTable();
 
-            var bSonId = new MongoDB.Bson.ObjectId(id);
-            var query = Query<HomeAutomation.DataAccess.Entity.Component>.EQ(e => e.Id, bSonId);
-            var model = DataAccess.DatabaseFacade.DatabaseManager.Components.FindOne(query);
+            //var bSonId = new MongoDB.Bson.ObjectId(id);
+            //var query = Query<HomeAutomation.DataAccess.Entity.Component>.EQ(e => e.Id, bSonId);
+            //var model = DataAccess.DatabaseFacade.DatabaseManager.Components.FindOne(query);
+
+            List<String> HistorySelectedComponentId = new List<string>();
+
+            if (this.Session["HistorySelectedComponentId"] != null) {
+                HistorySelectedComponentId.AddRange(this.Session["HistorySelectedComponentId"].ToString().Split(','));
+            }
+
+
+
+            HistorySelectedComponentId = HistorySelectedComponentId.Where(u => !String.IsNullOrEmpty(u)).Distinct().ToList();
+            var Components = new List<HomeAutomation.DataAccess.Entity.Component>();
+            if (HistorySelectedComponentId.Any()) {
+                var ListBsonId = HistorySelectedComponentId.Select(u => new MongoDB.Bson.ObjectId(u)).ToList();
+
+                Components = DataAccess.DatabaseFacade.DatabaseManager.Components.AsQueryable().Where(u => ListBsonId.Contains(u.Id)).ToList();
+            }
 
             //Act -----------------
             dt.AddColumn(new Column(ColumnType.Datetime, "Date", "Date"));
-            dt.AddColumn(new Column(ColumnType.Number, "Value", model.Name));
+            int i = 1;
+            int totalComp = Components.Count;
+            foreach (var comp in Components) {
+                dt.AddColumn(new Column(ColumnType.Number, comp.Id.ToString(), comp.Name + " | " + comp.Device.Name));
+
+                var refDocument = new MongoDB.Bson.BsonDocument { 
+                        {"$ref", "Component"}, 
+                        {"$id", comp.Id} 
+                    };
+                var queryHist = Query.EQ("ComponentId", refDocument);
+
+                var values = DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Find(queryHist);
+
+
+                foreach (var value in values) {
+                    var row = dt.NewRow();
+                    var cells = new Cell[i+1];
+
+                    cells[0] = new Cell(value.TimeStamp);
+                    for (int j = 1; j <= i; j++) {
+                        if (j == i) {
+                            cells[i] = new Cell(value.Value);
+                        } else {
+                            cells[j] = new Cell();
+                        }
+                        
+                    }
+                    
+                    row.AddCellRange(cells);
+                    //row.AddCellRange(new[] { new Cell(value.TimeStamp), new Cell(value.Value) });
+                    dt.AddRow(row);
+                }
+                var rowCur = dt.NewRow();
+
+                var cellscur = new Cell[i+1];
+
+                cellscur[0] = new Cell(comp.LastContact);
+                for (int j = 1; j <= i; j++) {
+                    if (j == i) {
+                        cellscur[i] = new Cell(comp.CurrentValue);
+                    } else {
+                        cellscur[j] = new Cell();
+                    }
+
+                }
+                rowCur.AddCellRange(cellscur);
+                dt.AddRow(rowCur);
+                i++;
+            }
+
 
             // var bSonId = new MongoDB.Driver.MongoDBRef("Component",new MongoDB.Bson.ObjectId( id));
-            var refDocument = new MongoDB.Bson.BsonDocument { 
-            {"$ref", "Component"}, 
-            {"$id", new MongoDB.Bson.ObjectId(id)} 
-        };
-            var queryHist = Query.EQ("ComponentId", refDocument);
 
-            var values = DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Find(queryHist);
-
-
-            foreach (var value in values) {
-                var row = dt.NewRow();
-                row.AddCellRange(new[] { new Cell(value.TimeStamp), new Cell(value.Value) });
-                dt.AddRow(row);
-            }
-            var rowCur = dt.NewRow();
-            rowCur.AddCellRange(new[] { new Cell(model.LastContact), new Cell(model.CurrentValue) });
-            dt.AddRow(rowCur);
 
             //row1.AddCellRange(new[] { new Cell(2012), new Cell(150) });
             //row2.AddCellRange(new[] { new Cell(2013), new Cell(100) });
@@ -81,6 +218,7 @@ namespace HomeAutomation.WebPortal.Controllers {
             //dt.AddRow(row2);
 
             return dt.GetJson();
+
         }
 
         //

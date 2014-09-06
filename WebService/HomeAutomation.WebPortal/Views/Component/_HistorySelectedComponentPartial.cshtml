@@ -1,0 +1,20 @@
+﻿@model List<HomeAutomation.DataAccess.Entity.Component>
+
+@if (ViewBag.SelectedComponentIDS != null) {
+    <input type="hidden" value="@ViewBag.SelectedComponentIDS" id="HistoryInputSelectedComponents" />
+} 
+
+
+<ul data-role="listview" data-split-icon="delete" data-theme="a" data-split-theme="a" data-inset="true" id="HistoryComponentListView">
+
+
+    @foreach (var item in Model) {
+        <li>
+            <a href="#">
+                <h2>@item.Name</h2>
+                <p>@item.Device.Name</p>
+            </a>
+            <a href="#">Remove from graph</a>
+        </li>
+    }
+</ul>

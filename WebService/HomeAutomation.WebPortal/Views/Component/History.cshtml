@@ -5,55 +5,124 @@
 
 <h2>History</h2>
 
-<form>
-    <fieldset data-role="controlgroup" data-type="horizontal" data-inline="true">
-        <legend>Date an Time Range:</legend>
-        <input type="radio" id="custom" value="custom" name="daterange"><label for="custom">Custom</label>
-        <input type="radio" id="year" value="year" name="daterange"><label for="year">Year</label>
-        <input type="radio" id="month" value="month" name="daterange"><label for="month">Month</label>
-        <input type="radio" id="week" value="week" name="daterange"><label for="week">Week</label>
-        <input type="radio" id="day" value="day" name="daterange" checked="checked"><label for="day">Day</label>
-        <input type="radio" id="12h" value="12h" name="daterange"><label for="12h">Last 12h</label>
-    </fieldset>
+<div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a">
+        <h3>Component Selection</h3>
+    </div>
+    <div class="ui-body ui-body-a">
+        <form>
+            <div id="HistorySelectedComponent">
+                @Html.Partial("_HistorySelectedComponentPartial", new List<HomeAutomation.DataAccess.Entity.Component>())
+            </div>
 
-<button class="ui-btn ui-corner-all" id="HistoryDateRangeSubmit">Refresh</button>
-</form>
+            <select name="select-component-menu" id="select-component-menu" data-native-menu="false" multiple="multiple" data-iconpos="left" >
+                <option>Select a components</option>
+                @foreach (var item in ViewBag.ListComponent) {
+                    <option value="@item.Id">@item.Name | @item.Device.Name</option>
+                }
+            </select>
 
+            
+        </form><button class="ui-btn ui-corner-all" id="HistoryAddComponentSubmit">Add Selected Component</button>
+    </div>
+</div>
 
-<div id="chart_div" style="height: 600px;"></div>
+<div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a">
+        <h3>Date an Time Range</h3>
+    </div>
+    <div class="ui-body ui-body-a">
+        <form>
+            <fieldset data-role="controlgroup" data-type="horizontal" data-inline="true">
+                <input type="radio" id="custom" value="custom" name="daterange"><label for="custom">Custom</label>
+                <input type="radio" id="year" value="year" name="daterange"><label for="year">Year</label>
+                <input type="radio" id="month" value="month" name="daterange"><label for="month">Month</label>
+                <input type="radio" id="week" value="week" name="daterange"><label for="week">Week</label>
+                <input type="radio" id="day" value="day" name="daterange" checked="checked"><label for="day">Day</label>
+                <input type="radio" id="12h" value="12h" name="daterange"><label for="12h">Last 12h</label>
+            </fieldset>
+
+            
+        </form><button class="ui-btn ui-corner-all" id="HistoryDateRangeSubmit">Refresh</button>
+    </div>
+</div>
+
+<div id="chart_div_history" style="height: 600px;"></div>
 
 @section PageScript{
     <script type="text/javascript">
-        google.load("visualization", "1", { packages: ["corechart"] });
-        google.setOnLoadCallback(drawChart);
-        function drawChart() {
+        $.mobile.document
+    // The custom selectmenu plugin generates an ID for the listview by suffixing the ID of the
+    // native widget with "-menu". Upon creation of the listview widget we want to place an
+    // input field before the list to be used for a filter.
+    .on("listviewcreate", "#select-component-menu-menu,#select-component-menu-menu", function (event) {
+    var input,
+    list = $(event.target),
+    form = list.jqmData("filter-form");
+    // We store the generated form in a variable attached to the popup so we avoid creating a
+    // second form/input field when the listview is destroyed/rebuilt during a refresh.
+    if (!form) {
+        input = $("<input data-type='search'></input>");
+        form = $("<form></form>").append(input);
+        input.textinput();
+        list
+        .before(form)
+        .jqmData("filter-form", form);
+        form.jqmData("listview", list);
+    }
+    // Instantiate a filterable widget on the newly created listview and indicate that the
+    // generated input form element is to be used for the filtering.
+    list.filterable({
+        input: input,
+        children: "> li:not(:jqmData(placeholder='true'))"
+    });
+})
+    // The custom select list may show up as either a popup or a dialog, depending on how much
+    // vertical room there is on the screen. If it shows up as a dialog, then the form containing
+    // the filter input field must be transferred to the dialog so that the user can continue to
+    // use it for filtering list items.
+    .on("pagecontainerbeforeshow", function (event, data) {
+    var listview, form,
+    id = data.toPage && data.toPage.attr("id");
+    if (!(id === "filter-menu-dialog" || id === "select-component-menu-dialog")) {
+        return;
+    }
+    listview = data.toPage.find("ul");
+    form = listview.jqmData("filter-form");
+    // Attach a reference to the listview as a data item to the dialog, because during the
+    // pagecontainerhide handler below the selectmenu widget will already have returned the
+    // listview to the popup, so we won't be able to find it inside the dialog with a selector.
+    data.toPage.jqmData("listview", listview);
+    // Place the form before the listview in the dialog.
+    listview.before(form);
+})
+    // After the dialog is closed, the form containing the filter input is returned to the popup.
+    .on("pagecontainerhide", function (event, data) {
+    var listview, form,
+    id = data.toPage && data.toPage.attr("id");
+    if (!(id === "filter-menu-dialog" || id === "select-component-menu-dialog")) {
+        return;
+    }
+    listview = data.toPage.jqmData("listview"),
+    form = listview.jqmData("filter-form");
+    // Put the form back in the popup. It goes ahead of the listview.
+    listview.before(form);
+});
 
-            var jsonData = $.ajax({
-                url: "/Component/GetDataTableJson",
+        $('#HistoryDateRangeSubmit').click(LoadGraph);
 
-                dataType: "json",
-                async: false
-            }).responseText;
+        $('#HistoryAddComponentSubmit').click(LoadComponent);
 
-            // Create our data table out of JSON data loaded from server.
-            var data = new google.visualization.DataTable(jsonData);
-
-            var options = {
-                title: 'History'
-            };
-
-            // Instantiate and draw our chart, passing in some options.
-            var chart =
-        new google.visualization.LineChart(document.getElementById('chart_div_history'));
-            chart.draw(data, options);
-        }
-
-        $('#HistoryDateRangeSubmit').click(function () {
+        function LoadGraph() {
             var daterange = $('input:radio[name=daterange]:checked').val();
             if (daterange == "") {
                 return false;
             }
-            var message = 'daterange=' + daterange;
+            var components = $('#HistoryInputSelectedComponents').val();
+            if (components == "") {
+                return false;
+            }
+            var message = 'daterange=' + daterange + ',components=' + components;
             $.ajax({
                 url: '/Component/GetDataTableJson',
                 type: 'POST',
@@ -63,7 +132,8 @@
                     var data = new google.visualization.DataTable(json);
 
                     var options = {
-                        title: 'History'
+                        title: 'History',
+                        pointSize: 3
                     };
 
                     // Instantiate and draw our chart, passing in some options.
@@ -72,6 +142,30 @@
                 }
             });
 
-        });
+        }
+
+        function LoadComponent() {
+            var components = $('#select-component-menu').val();
+            if (components == "") {
+                return false;
+            }
+            var message = 'components=' + components;
+            $.ajax({
+                url: '/Component/SelectComponents',
+                type: 'POST',
+                data: message, // An object with the key 'submit' and value 'true;
+                success: function (data) {
+                    //alert("Your bookmark has been saved");
+                    $("#HistorySelectedComponent").html(data);
+                    //$(this).find('ul').attr('data-role', 'listview').end().trigger('create');
+                    
+                    $("#HistoryComponentListView").listview();
+                    LoadGraph();
+                }
+            });
+
+        }
+
+        LoadGraph();
     </script>
 }
