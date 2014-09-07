@@ -138,6 +138,27 @@ namespace HomeAutomation.WebPortal.Controllers {
             //var bSonId = new MongoDB.Bson.ObjectId(id);
             //var query = Query<HomeAutomation.DataAccess.Entity.Component>.EQ(e => e.Id, bSonId);
             //var model = DataAccess.DatabaseFacade.DatabaseManager.Components.FindOne(query);
+            var TimeAgo = DateTime.Now.AddDays(-1);
+            if (collection["daterange"] != null) {
+                switch (collection["daterange"].ToString()) {
+                    case "day":
+                        break;
+                    case "12h":
+                        TimeAgo = DateTime.Now.AddHours(-12);
+                        break;
+                    case "week":
+                        TimeAgo = DateTime.Now.AddDays(-7);
+                        break;
+                    case "month":
+                        TimeAgo = DateTime.Now.AddMonths(-1);
+                        break;
+                    case "year":
+                        TimeAgo = DateTime.Now.AddYears(-1);
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             List<String> HistorySelectedComponentId = new List<string>();
 
@@ -168,7 +189,7 @@ namespace HomeAutomation.WebPortal.Controllers {
                     };
                 var queryHist = Query.EQ("ComponentId", refDocument);
 
-                var values = DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Find(queryHist);
+                var values = DataAccess.DatabaseFacade.DatabaseManager.ComponentValueHistory.Find(queryHist).AsQueryable().Where(u=> u.TimeStamp > TimeAgo);
 
 
                 foreach (var value in values) {

@@ -34,6 +34,7 @@
     <div class="ui-body ui-body-a">
         <form>
             <fieldset data-role="controlgroup" data-type="horizontal" data-inline="true">
+                <legend></legend>
                 <input type="radio" id="custom" value="custom" name="daterange"><label for="custom">Custom</label>
                 <input type="radio" id="year" value="year" name="daterange"><label for="year">Year</label>
                 <input type="radio" id="month" value="month" name="daterange"><label for="month">Month</label>
@@ -122,7 +123,7 @@
             if (components == "") {
                 return false;
             }
-            var message = 'daterange=' + daterange + ',components=' + components;
+            var message = 'daterange=' + daterange + '&components=' + components;
             $.ajax({
                 url: '/Component/GetDataTableJson',
                 type: 'POST',
